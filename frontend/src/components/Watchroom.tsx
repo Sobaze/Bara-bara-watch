@@ -1,12 +1,16 @@
-import { TopNavBar } from "./TopNavBar";
 
-export function Watchroom() {
+import { StreamSlotGrid } from "./StreamSlotGrid";
+import type { StreamInfo } from "../types/stream"
+
+type WatchroomProps = {
+    streams: StreamInfo[],
+    onRemoveStream: (streamId: number) => void
+}
+
+export function Watchroom({ streams, onRemoveStream }: WatchroomProps) {
   return (
-    <div className="flex flex-col h-screen">
-      <TopNavBar />
-      <div className="flex-1 flex items-center justify-center">
-        <h1 className="text-4xl font-bold">Welcome to the Watchroom!</h1>
-      </div>
+    <div className="flex flex-col h-150">
+      <StreamSlotGrid streams={streams} onRemoveStream={onRemoveStream} />
     </div>
   );
 }
