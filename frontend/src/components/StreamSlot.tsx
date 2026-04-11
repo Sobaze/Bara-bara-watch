@@ -10,6 +10,7 @@ export function StreamSlot({ stream}: StreamSlotProps) {
             title={stream.title}
             className="w-full h-full"
             allowFullScreen
-        ></iframe>
+        >
+        </iframe>
     )
 }
