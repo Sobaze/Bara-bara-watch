@@ -1,6 +1,8 @@
-
+import { useEffect, useRef, useState } from "react";
 import { StreamSlotGrid } from "./StreamSlotGrid";
 import type { StreamInfo } from "../types/stream"
+import { StreamSettings } from "./StreamSettings";
+import { StreamLayoutSelector } from "./StreamLayoutSelector";
 
 type WatchroomProps = {
     streams: StreamInfo[],
@@ -8,16 +10,93 @@ type WatchroomProps = {
 }
 
 export function Watchroom({ streams, onRemoveStream }: WatchroomProps) {
-  
+    const fullScreenRef = useRef<HTMLDivElement>(null);
+    const [isFullScreen, setIsFullScreen] = useState(false);
+    const [isLayoutSelectorOpen, setIsLayoutSelectorOpen] = useState(false);
+    const [isStreamSettingsOpen, setIsStreamSettingsOpen] = useState(false);
+    const canChangeLayout = streams.length === 2 || streams.length === 3;
+
+    useEffect(() => { 
+      function handleFullScreenChange() {
+        setIsFullScreen(document.fullscreenElement === fullScreenRef.current);
+      }
+      document.addEventListener("fullscreenchange", handleFullScreenChange);
+      return () => {
+        document.removeEventListener("fullscreenchange", handleFullScreenChange);
+      };
+    },[])
+
     function fullScreenStream() {
-        document.documentElement.requestFullscreen()
+        fullScreenRef.current?.requestFullscreen();
     }
+
+    function handleExitFullScreen() {
+        document.exitFullscreen();
+    }
+
+    function handleToggleLayoutSelector() {
+      setIsLayoutSelectorOpen((current) => {
+        const next = !current;
+        if (next) {
+          setIsStreamSettingsOpen(false);
+        }
+        return next;
+      });
+    }
+
+    function handleToggleStreamSettings() {
+      setIsStreamSettingsOpen((current) => {
+        const next = !current;
+        if (next) {
+          setIsLayoutSelectorOpen(false);
+        }
+        return next;
+      });
+    }
+   
   return (
-    <div className="flex flex-col h-230">
-      <StreamSlotGrid streams={streams} onRemoveStream={onRemoveStream} />
-      <button onClick={fullScreenStream} className="absolute top-2 right-2 bg-gray-800 text-white px-3 py-1 rounded-md">
-              Full Screen
+    <div
+      ref={fullScreenRef}
+      className="relative flex h-230 flex-col overflow-hidden rounded-2xl bg-zinc-950"
+    >
+      <div className="h-full">
+        <StreamSlotGrid streams={streams} onRemoveStream={onRemoveStream} />
+      </div>
+
+      <div className="absolute bottom-4 right-4 z-20 flex items-end gap-3">
+        {isLayoutSelectorOpen && canChangeLayout && <StreamLayoutSelector />}
+        {isStreamSettingsOpen && (
+          <StreamSettings streams={streams} onRemoveStream={onRemoveStream} />
+        )}
+
+        <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-zinc-900/85 p-2 shadow-lg backdrop-blur">
+          {canChangeLayout && (
+            <button
+              type="button"
+              onClick={handleToggleLayoutSelector}
+              className="rounded-xl px-3 py-2 text-sm font-medium text-zinc-100 transition hover:bg-white/10"
+            >
+              Layout
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={handleToggleStreamSettings}
+            className="rounded-xl px-3 py-2 text-sm font-medium text-zinc-100 transition hover:bg-white/10"
+          >
+            Streams
           </button>
+
+          <button
+            type="button"
+            onClick={isFullScreen ? handleExitFullScreen : fullScreenStream}
+            className="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-200"
+          >
+            {isFullScreen ? "Exit Full Screen" : "Full Screen"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
