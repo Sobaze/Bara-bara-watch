@@ -14,7 +14,11 @@ export function Watchroom({ streams, onRemoveStream }: WatchroomProps) {
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [isLayoutSelectorOpen, setIsLayoutSelectorOpen] = useState(false);
     const [isStreamSettingsOpen, setIsStreamSettingsOpen] = useState(false);
+    const [twoStreamLayout, setTwoStreamLayout] = useState<'side-by-side' | 'stacked'>('side-by-side');
+    const [threeStreamLayout, setThreeStreamLayout] = useState<'main-on-top' | 'main-on-left'>('main-on-left');
+
     const canChangeLayout = streams.length === 2 || streams.length === 3;
+    const activeLayout = streams.length === 2 ? twoStreamLayout : streams.length === 3 ? threeStreamLayout : null;  
 
     useEffect(() => { 
       function handleFullScreenChange() {
@@ -53,6 +57,14 @@ export function Watchroom({ streams, onRemoveStream }: WatchroomProps) {
         return next;
       });
     }
+
+    function handleSelectLayout2Streams(layout: 'side-by-side' | 'stacked') {
+      setTwoStreamLayout(layout);
+    }
+
+    function handleSelectLayout3Streams(layout: 'main-on-top' | 'main-on-left') {
+      setThreeStreamLayout(layout);
+    }
    
   return (
     <div
@@ -60,11 +72,13 @@ export function Watchroom({ streams, onRemoveStream }: WatchroomProps) {
       className="relative flex h-230 flex-col overflow-hidden rounded-2xl bg-zinc-950"
     >
       <div className="h-full">
-        <StreamSlotGrid streams={streams} onRemoveStream={onRemoveStream} />
+        {
+          <StreamSlotGrid streams={streams} onRemoveStream={onRemoveStream} layout={activeLayout} />
+        }
       </div>
 
       <div className="absolute bottom-4 right-4 z-20 flex items-end gap-3">
-        {isLayoutSelectorOpen && canChangeLayout && <StreamLayoutSelector />}
+        {isLayoutSelectorOpen && canChangeLayout && <StreamLayoutSelector streams={streams} onSelectLayout2Streams={handleSelectLayout2Streams} onSelectLayout3Streams={handleSelectLayout3Streams} />}
         {isStreamSettingsOpen && (
           <StreamSettings streams={streams} onRemoveStream={onRemoveStream} />
         )}

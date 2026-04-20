@@ -12,7 +12,6 @@ function App() {
           { id: 1, title: "Stream 1", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
           { id: 2, title: "Stream 2", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
           { id: 3, title: "Stream 3", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
-          { id: 3, title: "Stream 3", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
       ]
   const [streams, setStreams] = useState<StreamInfo[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
