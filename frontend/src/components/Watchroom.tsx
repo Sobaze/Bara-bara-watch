@@ -73,7 +73,7 @@ export function Watchroom({ streams, onRemoveStream }: WatchroomProps) {
     >
       <div className="h-full">
         {
-          <StreamSlotGrid streams={streams} onRemoveStream={onRemoveStream} layout={activeLayout} />
+          <StreamSlotGrid streams={streams}  layout={activeLayout} />
         }
       </div>
 

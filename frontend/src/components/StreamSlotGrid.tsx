@@ -5,7 +5,6 @@ import type { StreamInfo } from "../types/stream"
 
 type StreamGridProps = {
     streams: StreamInfo[],
-    onRemoveStream: (streamId: number) => void,
     layout?: 'side-by-side' | 'stacked' | 'main-on-top' | 'main-on-left' | null
 }
 
