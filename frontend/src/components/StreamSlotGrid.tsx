@@ -24,7 +24,7 @@ export function StreamSlotGrid( { streams, layout }: StreamGridProps ) {
                 </div>
             )}
             {streams.length === 2 && (
-                <div  className={layout === 'side-by-side' ? "grid h-full grid-cols-2 gap-1" : layout === 'stacked' ? "grid h-full grid-rows-2 gap-1" : "grid h-full grid-cols-2 gap-1"}>
+                <div  className={layout === 'side-by-side' ? "grid h-full grid-cols-2 " : layout === 'stacked' ? "grid h-full grid-rows-2" : "grid h-full grid-cols-2"}>
                     {streams.map((stream) => ( 
                         <div 
                             key={stream.id}
@@ -36,7 +36,7 @@ export function StreamSlotGrid( { streams, layout }: StreamGridProps ) {
                 </div>
             )}
             {streams.length === 3 && (
-                <div className="grid h-full grid-cols-2 grid-rows-2 gap-1"> 
+                <div className="grid h-full grid-cols-2 grid-rows-2"> 
                     {streams.map((stream, index) => {
                         const baseLayout = "min-h-0 overflow-hidden rounded-md bg-black";
                         const layoutClass = layout === 'main-on-top' ? index === 0 ? "col-span-2" : "" : 
@@ -54,7 +54,7 @@ export function StreamSlotGrid( { streams, layout }: StreamGridProps ) {
                 </div>
             )}
             {streams.length === 4 && (
-                <div className="grid h-full grid-cols-2 gap-1">
+                <div className="grid h-full grid-cols-2">
                     {streams.map((stream) => (
                         <div
                             key={stream.id}

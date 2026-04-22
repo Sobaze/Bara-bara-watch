@@ -28,6 +28,8 @@ function App() {
           { id: 1, title: "Stream 1", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
           { id: 2, title: "Stream 2", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
           { id: 3, title: "Stream 3", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+          { id: 3, title: "Stream 3", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+          { id: 3, title: "Stream 3", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
       ]
     const results = dummyStreams.filter(stream => stream.title.toLowerCase().includes(searchQuery.toLowerCase()))
     setSearchResults(results)
@@ -37,6 +39,8 @@ function App() {
 
   function handleAddStreams(newStreams: StreamInfo[]) {
     setStreams(prevStreams => [...prevStreams, ...newStreams])
+    setIsPanelOpen(false)
+    setSearchQuery('')
   }
   function handleRemoveStream(streamId: number) {
     setStreams(prevStreams => prevStreams.filter(stream => stream.id !== streamId))
