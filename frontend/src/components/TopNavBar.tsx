@@ -1,6 +1,6 @@
 
 import { SearchResultPanel } from './SearchResultPanel'
-import type { StreamInfo } from '../types/stream'
+import type { SearchResultInfo } from '../types/stream'
 
 type TopNavBarProps = {
     items: number
@@ -9,11 +9,11 @@ type TopNavBarProps = {
     handleSearch: (query: string) => void
     isPanelOpen: boolean
     setIsPanelOpen: (open: boolean) => void
-    searchResults: StreamInfo[]
-    handleAddStreams: (newStreams: StreamInfo[]) => void
+    searchResults: SearchResultInfo[]
+    handleAddSearchResultToStream: (result: SearchResultInfo) => void
 }
 
-export function TopNavBar({ items, searchQuery, setSearchQuery, handleSearch, isPanelOpen, setIsPanelOpen, searchResults, handleAddStreams }: TopNavBarProps) {
+export function TopNavBar({ items, searchQuery, setSearchQuery, handleSearch, isPanelOpen, setIsPanelOpen, searchResults, handleAddSearchResultToStream }: TopNavBarProps) {
 
   function handleSearchString(event: React.ChangeEvent<HTMLInputElement>) {
     setSearchQuery(event.target.value);
@@ -44,7 +44,7 @@ export function TopNavBar({ items, searchQuery, setSearchQuery, handleSearch, is
           </form>
             {isPanelOpen && <SearchResultPanel  setModalState={setIsPanelOpen} 
                                                 searchResults={searchResults} 
-                                                handleAddStreams={handleAddStreams} 
+                                                handleAddSearchResultToStream={handleAddSearchResultToStream} 
                                                 setSearchQuery={setSearchQuery}
                             />}
         </div>

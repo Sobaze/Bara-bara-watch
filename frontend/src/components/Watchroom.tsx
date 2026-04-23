@@ -69,7 +69,7 @@ export function Watchroom({ streams, onRemoveStream }: WatchroomProps) {
   return (
     <div
       ref={fullScreenRef}
-      className="relative flex h-230 flex-col overflow-hidden rounded-2xl bg-zinc-950"
+      className="relative flex h-[93dvh] flex-col overflow-hidden rounded-2xl bg-zinc-950"
     >
       <div className="h-full">
         {
