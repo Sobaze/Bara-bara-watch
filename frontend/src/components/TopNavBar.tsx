@@ -42,10 +42,9 @@ export function TopNavBar({ items, searchQuery, setSearchQuery, handleSearch, is
               className="w-full rounded-full border border-white/10 bg-white/95 px-4 py-2 text-sm text-zinc-900 outline-none transition focus:ring-2 focus:ring-blue-500"
             />
           </form>
-            {isPanelOpen && <SearchResultPanel  setModalState={setIsPanelOpen} 
+            {isPanelOpen && <SearchResultPanel  setIsPanelOpen={setIsPanelOpen} 
                                                 searchResults={searchResults} 
                                                 handleAddSearchResultToStream={handleAddSearchResultToStream} 
-                                                setSearchQuery={setSearchQuery}
                             />}
         </div>
       <div className="justify-self-end">

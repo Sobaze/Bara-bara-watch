@@ -15,7 +15,7 @@ export function StreamSlotGrid( { streams, layout }: StreamGridProps ) {
         <div className=" p-1 h-full">
             {streams.length === 0 && (
                 <div className="col-span-2 h-full flex items-center justify-center text-gray-500">
-                    No streams added. Use the form above to add a stream. // todo: add a button to open the form modal
+                    No streams added. Search for a Stream and add it.
                 </div>
             )}
             {streams.length === 1 && (

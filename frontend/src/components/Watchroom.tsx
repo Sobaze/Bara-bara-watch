@@ -8,17 +8,21 @@ type WatchroomProps = {
     streams: StreamInfo[],
     onRemoveStream: (streamId: number) => void
 }
+type TwoStreamLayout = 'side-by-side' | 'stacked';
+type ThreeStreamLayout = 'main-on-top' | 'main-on-left';
 
 export function Watchroom({ streams, onRemoveStream }: WatchroomProps) {
     const fullScreenRef = useRef<HTMLDivElement>(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [isLayoutSelectorOpen, setIsLayoutSelectorOpen] = useState(false);
     const [isStreamSettingsOpen, setIsStreamSettingsOpen] = useState(false);
-    const [twoStreamLayout, setTwoStreamLayout] = useState<'side-by-side' | 'stacked'>('side-by-side');
-    const [threeStreamLayout, setThreeStreamLayout] = useState<'main-on-top' | 'main-on-left'>('main-on-left');
+    const [twoStreamLayout, setTwoStreamLayout] = useState<TwoStreamLayout>('side-by-side');
+    const [threeStreamLayout, setThreeStreamLayout] = useState<ThreeStreamLayout>('main-on-left');
 
     const canChangeLayout = streams.length === 2 || streams.length === 3;
     const activeLayout = streams.length === 2 ? twoStreamLayout : streams.length === 3 ? threeStreamLayout : null;  
+    const layoutMode = streams.length === 2 ?'2-stream' : streams.length === 3 ? '3-stream' : null;
+
 
     useEffect(() => { 
       function handleFullScreenChange() {
@@ -77,8 +81,8 @@ export function Watchroom({ streams, onRemoveStream }: WatchroomProps) {
         }
       </div>
 
-      <div className="absolute bottom-4 right-4 z-20 flex items-end gap-3">
-        {isLayoutSelectorOpen && canChangeLayout && <StreamLayoutSelector streams={streams} onSelectLayout2Streams={handleSelectLayout2Streams} onSelectLayout3Streams={handleSelectLayout3Streams} />}
+      <div className="absolute bottom-2 right-2 z-20 flex items-end gap-3">
+        {isLayoutSelectorOpen && canChangeLayout && <StreamLayoutSelector layoutMode={layoutMode} onSelectLayout2Streams={handleSelectLayout2Streams} onSelectLayout3Streams={handleSelectLayout3Streams} />}
         {isStreamSettingsOpen && (
           <StreamSettings streams={streams} onRemoveStream={onRemoveStream} />
         )}
