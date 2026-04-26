@@ -1,10 +1,10 @@
-
+import type { LayoutMode, ThreeStreamLayout, TwoStreamLayout } from "../types/stream"
 
 type StreamLayoutSelectorProps = {
-    onSelectLayout2Streams: (layout: 'side-by-side' | 'stacked') => void,
-    onSelectLayout3Streams: (layout: 'main-on-top' | 'main-on-left') => void,
+    onSelectLayout2Streams: (layout: TwoStreamLayout) => void,
+    onSelectLayout3Streams: (layout: ThreeStreamLayout) => void,
     
-    layoutMode: '2-stream' | '3-stream' | null
+    layoutMode: LayoutMode
 }
 
 export function StreamLayoutSelector( { onSelectLayout2Streams, onSelectLayout3Streams, layoutMode }: StreamLayoutSelectorProps) {

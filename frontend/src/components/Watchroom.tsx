@@ -1,17 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { StreamSlotGrid } from "./StreamSlotGrid";
 import type { StreamInfo } from "../types/stream"
+import type { ActiveLayout, LayoutMode, TwoStreamLayout, ThreeStreamLayout } from "../types/stream"
 import { StreamSettings } from "./StreamSettings";
 import { StreamLayoutSelector } from "./StreamLayoutSelector";
 
+
 type WatchroomProps = {
     streams: StreamInfo[],
-    onRemoveStream: (streamId: number) => void
+    onRemoveStream: (streamId: number) => void,
+    swapStream: (fromIndex: number, toIndex: number) => void
 }
-type TwoStreamLayout = 'side-by-side' | 'stacked';
-type ThreeStreamLayout = 'main-on-top' | 'main-on-left';
 
-export function Watchroom({ streams, onRemoveStream }: WatchroomProps) {
+export function Watchroom({ streams, onRemoveStream, swapStream }: WatchroomProps) {
     const fullScreenRef = useRef<HTMLDivElement>(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [isLayoutSelectorOpen, setIsLayoutSelectorOpen] = useState(false);
@@ -20,8 +21,8 @@ export function Watchroom({ streams, onRemoveStream }: WatchroomProps) {
     const [threeStreamLayout, setThreeStreamLayout] = useState<ThreeStreamLayout>('main-on-left');
 
     const canChangeLayout = streams.length === 2 || streams.length === 3;
-    const activeLayout = streams.length === 2 ? twoStreamLayout : streams.length === 3 ? threeStreamLayout : null;  
-    const layoutMode = streams.length === 2 ?'2-stream' : streams.length === 3 ? '3-stream' : null;
+    const activeLayout: ActiveLayout = streams.length === 2 ? twoStreamLayout : streams.length === 3 ? threeStreamLayout : null;  
+    const layoutMode: LayoutMode = streams.length === 2 ?'2-stream' : streams.length === 3 ? '3-stream' : null;
 
 
     useEffect(() => { 
@@ -62,11 +63,11 @@ export function Watchroom({ streams, onRemoveStream }: WatchroomProps) {
       });
     }
 
-    function handleSelectLayout2Streams(layout: 'side-by-side' | 'stacked') {
+    function handleSelectLayout2Streams(layout: TwoStreamLayout) {
       setTwoStreamLayout(layout);
     }
 
-    function handleSelectLayout3Streams(layout: 'main-on-top' | 'main-on-left') {
+    function handleSelectLayout3Streams(layout: ThreeStreamLayout) {
       setThreeStreamLayout(layout);
     }
    
@@ -84,7 +85,7 @@ export function Watchroom({ streams, onRemoveStream }: WatchroomProps) {
       <div className="absolute bottom-2 right-2 z-20 flex items-end gap-3">
         {isLayoutSelectorOpen && canChangeLayout && <StreamLayoutSelector layoutMode={layoutMode} onSelectLayout2Streams={handleSelectLayout2Streams} onSelectLayout3Streams={handleSelectLayout3Streams} />}
         {isStreamSettingsOpen && (
-          <StreamSettings streams={streams} onRemoveStream={onRemoveStream} />
+          <StreamSettings streams={streams} onRemoveStream={onRemoveStream} swapStream={swapStream} activeLayout={activeLayout} />
         )}
 
         <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-zinc-900/85 p-2 shadow-lg backdrop-blur">

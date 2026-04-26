@@ -18,3 +18,11 @@ export type SearchResultInfo = {
     publishedAt?: string,
     duration?: string
 }
+
+export type TwoStreamLayout = 'side-by-side' | 'stacked'
+
+export type ThreeStreamLayout = 'main-on-top' | 'main-on-left'
+
+export type ActiveLayout = TwoStreamLayout | ThreeStreamLayout | null
+
+export type LayoutMode = '2-stream' | '3-stream' | null
