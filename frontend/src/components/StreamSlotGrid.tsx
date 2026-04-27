@@ -1,11 +1,11 @@
 
 import { StreamSlot } from "./StreamSlot"
-import type { StreamInfo } from "../types/stream"
+import type { ActiveLayout, StreamInfo } from "../types/stream"
 
 
 type StreamGridProps = {
     streams: StreamInfo[],
-    layout?: 'side-by-side' | 'stacked' | 'main-on-top' | 'main-on-left' | null
+    layout?: ActiveLayout
 }
 
 

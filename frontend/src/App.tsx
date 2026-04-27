@@ -54,12 +54,14 @@ function App() {
   }
   function swapStream(fromIndex: number, toIndex: number) {
     setStreams(prevStreams => {
-      const pickedIndex = prevStreams.findIndex(stream => stream.id === fromIndex);
-      const destinationIndex = prevStreams.findIndex(stream => stream.id === toIndex);
-      const updatedStreams = [...prevStreams];
-      const [pickedStream] = updatedStreams.splice(pickedIndex, 1);
-      updatedStreams.splice(destinationIndex, 0, pickedStream);
-      return updatedStreams;
+      if (fromIndex < 0 || toIndex < 0 || fromIndex >= prevStreams.length || toIndex >= prevStreams.length) {
+        return prevStreams
+      }
+      const updatedStreams = [...prevStreams]
+      const temp = updatedStreams[fromIndex]
+      updatedStreams[fromIndex] = updatedStreams[toIndex]
+      updatedStreams[toIndex] = temp
+      return updatedStreams
     });
   }
   function handleRemoveStream(streamId: number) {
