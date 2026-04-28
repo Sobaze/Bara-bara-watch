@@ -6,10 +6,11 @@ type SearchResultPanelProps = {
     setIsPanelOpen: (visible: boolean) => void
     searchResults: SearchResultInfo[]
     handleAddSearchResultToStream: (result: SearchResultInfo) => void
+    items: number
 }
 
 
-export function SearchResultPanel({ setIsPanelOpen, searchResults, handleAddSearchResultToStream,  }: SearchResultPanelProps) {
+export function SearchResultPanel({ setIsPanelOpen, searchResults, handleAddSearchResultToStream, items }: SearchResultPanelProps) {
 
     function handleClose() {
         setIsPanelOpen(false)
@@ -27,7 +28,7 @@ export function SearchResultPanel({ setIsPanelOpen, searchResults, handleAddSear
             <div className="relative max-h-[70dvh] overflow-y-auto">
                     {searchResults.length > 0 ? (
                         searchResults.map(stream => (
-                            <div key={stream.id} className="border-b py-2 flex items-center gap-4 py-* min-h-*">
+                            <div key={stream.id} className="border-b py-2 flex items-center gap-4 ">
                                 <img src={stream.thumbnailUrl} 
                                      alt={stream.title}
                                      className="ml-2 mb-1 h-30 w-38 shrink-0 object-cover rounded-md" 
@@ -43,10 +44,11 @@ export function SearchResultPanel({ setIsPanelOpen, searchResults, handleAddSear
 
                                     </div>
                                 </div>
-                                
-                                <button onClick={() => handleAddSearchResultToStream(stream)} className="shrink-0 mr-2 py-2 text-sm font-medium bg-green-500 text-white rounded-md hover:bg-green-600">
-                                    Add Stream
-                                </button>
+                                {items < 4 && (
+                                    <button onClick={() => handleAddSearchResultToStream(stream)} className="shrink-0 mr-2 py-2 text-sm font-medium bg-green-500 text-white rounded-md hover:bg-green-600">
+                                        Add Stream
+                                    </button>
+                                )}
                             </div>
                         ))
                     ) : (

@@ -4,7 +4,7 @@ type StreamsettingsProps = {
     streams: StreamInfo[],
     onRemoveStream: (streamId: number) => void,
     swapStream: (fromIndex: number, toIndex: number) => void,
-    activeLayout: ActiveLayout
+    activeLayout: ActiveLayout,
 }
 type MoveTargets = {
     up?:number,
@@ -146,9 +146,7 @@ function getArrowLabel(direction: string, streamCount: number, activeLayout: Act
 function getPreviewBoxClass(streamCount: number, layout: ActiveLayout, index: number) {
     if (streamCount === 3 && layout === 'main-on-left' && index === 0) {
         return 'h-68'
-    } if (streamCount === 3 && layout === 'main-on-top' && index === 0) {
-        return 'h-24'
-    }
+    } 
     return 'h-24'
 }
 
@@ -157,7 +155,7 @@ export function StreamSettings({ streams, onRemoveStream, swapStream, activeLayo
     const containerClass = getSettingsGridClass(streams.length, activeLayout);
     const baseArrowClass = 'rounded-lg px-2 py-1 text-xs font-medium text-blue-300 transition hover:bg-blue-500/10 hover:text-blue-200'
     return (
-        <div className="w-120 absolute right-1 bottom-15 rounded-2xl border border-white/10 bg-zinc-900/95 p-3 text-zinc-100 shadow-lg backdrop-blur">
+        <div className="w-120 absolute right-1 bottom-13 rounded-2xl border border-white/10 bg-zinc-900/95 p-3 text-zinc-100 shadow-lg backdrop-blur">
             <p className="mb-3 text-sm font-semibold pb-2">Stream Settings</p>
             <div className="space-y-2">
                 {streams.length === 0 && (

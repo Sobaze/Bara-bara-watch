@@ -45,6 +45,7 @@ export function TopNavBar({ items, searchQuery, setSearchQuery, handleSearch, is
             {isPanelOpen && <SearchResultPanel  setIsPanelOpen={setIsPanelOpen} 
                                                 searchResults={searchResults} 
                                                 handleAddSearchResultToStream={handleAddSearchResultToStream} 
+                                                items={items}
                             />}
         </div>
       <div className="justify-self-end">

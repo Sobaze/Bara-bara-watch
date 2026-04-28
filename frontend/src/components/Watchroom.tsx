@@ -14,9 +14,11 @@ type WatchroomProps = {
 
 export function Watchroom({ streams, onRemoveStream, swapStream }: WatchroomProps) {
     const fullScreenRef = useRef<HTMLDivElement>(null);
+    const hideControlsTimeoutRef = useRef<number | null>(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [isLayoutSelectorOpen, setIsLayoutSelectorOpen] = useState(false);
     const [isStreamSettingsOpen, setIsStreamSettingsOpen] = useState(false);
+
     const [twoStreamLayout, setTwoStreamLayout] = useState<TwoStreamLayout>('side-by-side');
     const [threeStreamLayout, setThreeStreamLayout] = useState<ThreeStreamLayout>('main-on-left');
 
@@ -42,25 +44,39 @@ export function Watchroom({ streams, onRemoveStream, swapStream }: WatchroomProp
     function handleExitFullScreen() {
         document.exitFullscreen();
     }
-
-    function handleToggleLayoutSelector() {
-      setIsLayoutSelectorOpen((current) => {
-        const next = !current;
-        if (next) {
-          setIsStreamSettingsOpen(false);
+    
+    useEffect(() => {
+      return () => {
+        if (hideControlsTimeoutRef.current) {
+          window.clearTimeout(hideControlsTimeoutRef.current);
         }
-        return next;
-      });
+        
+      }
+    }, [])
+
+    function handleMouseMove() {
+      if (hideControlsTimeoutRef.current) {
+        window.clearTimeout(hideControlsTimeoutRef.current);
+      }
+      hideControlsTimeoutRef.current = window.setTimeout(() => {
+        setIsLayoutSelectorOpen(false);
+        setIsStreamSettingsOpen(false);
+      }, 2000);
     }
 
-    function handleToggleStreamSettings() {
-      setIsStreamSettingsOpen((current) => {
-        const next = !current;
-        if (next) {
-          setIsLayoutSelectorOpen(false);
-        }
-        return next;
-      });
+    function handleMouseLeave() {
+      setIsLayoutSelectorOpen(false);
+      setIsStreamSettingsOpen(false);
+    }
+
+    function handleOpenLayoutSelector() {
+      setIsLayoutSelectorOpen(true);
+      setIsStreamSettingsOpen(false);
+    }
+
+    function handleOpenStreamSettings() {
+      setIsStreamSettingsOpen(true);
+      setIsLayoutSelectorOpen(false);
     }
 
     function handleSelectLayout2Streams(layout: TwoStreamLayout) {
@@ -74,6 +90,8 @@ export function Watchroom({ streams, onRemoveStream, swapStream }: WatchroomProp
   return (
     <div
       ref={fullScreenRef}
+      onMouseLeave={handleMouseLeave}
+      onMouseMove={handleMouseMove}
       className="relative flex h-[93dvh] flex-col overflow-hidden rounded-2xl bg-zinc-950"
     >
       <div className="h-full">
@@ -81,18 +99,23 @@ export function Watchroom({ streams, onRemoveStream, swapStream }: WatchroomProp
           <StreamSlotGrid streams={streams}  layout={activeLayout} />
         }
       </div>
-
-      <div className="absolute bottom-2 right-2 z-20 flex items-end gap-3">
-        {isLayoutSelectorOpen && canChangeLayout && <StreamLayoutSelector layoutMode={layoutMode} onSelectLayout2Streams={handleSelectLayout2Streams} onSelectLayout3Streams={handleSelectLayout3Streams} />}
+        
+      <div className={`absolute bottom-2 right-2 z-20 flex items-end`}>
+        {isLayoutSelectorOpen && canChangeLayout && (
+          <div onMouseLeave={() => setIsLayoutSelectorOpen(false)}>
+            <StreamLayoutSelector layoutMode={layoutMode} onSelectLayout2Streams={handleSelectLayout2Streams} onSelectLayout3Streams={handleSelectLayout3Streams}  />
+          </div>)}
         {isStreamSettingsOpen && (
-          <StreamSettings streams={streams} onRemoveStream={onRemoveStream} swapStream={swapStream} activeLayout={activeLayout} />
+          <div onMouseLeave={() => setIsStreamSettingsOpen(false)}>
+            <StreamSettings streams={streams} onRemoveStream={onRemoveStream} swapStream={swapStream} activeLayout={activeLayout}  />
+          </div>
         )}
 
         <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-zinc-900/85 p-2 shadow-lg backdrop-blur">
           {canChangeLayout && (
             <button
               type="button"
-              onClick={handleToggleLayoutSelector}
+              onMouseEnter={handleOpenLayoutSelector}
               className="rounded-xl px-3 py-2 text-sm font-medium text-zinc-100 transition hover:bg-white/10"
             >
               Layout
@@ -101,7 +124,7 @@ export function Watchroom({ streams, onRemoveStream, swapStream }: WatchroomProp
 
           <button
             type="button"
-            onClick={handleToggleStreamSettings}
+            onMouseEnter={handleOpenStreamSettings}
             className="rounded-xl px-3 py-2 text-sm font-medium text-zinc-100 transition hover:bg-white/10"
           >
             Streams

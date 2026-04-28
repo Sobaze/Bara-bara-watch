@@ -4,7 +4,7 @@ type StreamLayoutSelectorProps = {
     onSelectLayout2Streams: (layout: TwoStreamLayout) => void,
     onSelectLayout3Streams: (layout: ThreeStreamLayout) => void,
     
-    layoutMode: LayoutMode
+    layoutMode: LayoutMode,
 }
 
 export function StreamLayoutSelector( { onSelectLayout2Streams, onSelectLayout3Streams, layoutMode }: StreamLayoutSelectorProps) {
@@ -13,7 +13,7 @@ export function StreamLayoutSelector( { onSelectLayout2Streams, onSelectLayout3S
     return (
         <div>
             {layoutMode === '2-stream' && (
-                <div className="w-120 absolute right-1 bottom-15  rounded-2xl border border-white/10 bg-zinc-900/95 p-3 text-zinc-100 shadow-lg backdrop-blur">
+                <div className="w-120 absolute right-1 bottom-13  rounded-2xl border border-white/10 bg-zinc-900/95 p-3 text-zinc-100 shadow-lg backdrop-blur">
                     <p className="mb-10 pb-4 text-sm font-semibold">Layout Options</p>
                     <div className="grid grid-cols-2 gap-2">
                         <button
@@ -29,7 +29,7 @@ export function StreamLayoutSelector( { onSelectLayout2Streams, onSelectLayout3S
                         </button>
                         <button
                             type="button"
-                            className="rounded-xl w-70% border border-white/10 bg-zinc-800 p-3 text-left transition hover:border-white/20 hover:bg-zinc-700"
+                            className="rounded-xl border border-white/10 bg-zinc-800 p-3 text-left transition hover:border-white/20 hover:bg-zinc-700"
                             onClick={() => onSelectLayout2Streams('stacked')}
                         >
                             <div className="mb-2 grid h-14 grid-rows-2 gap-1">
@@ -42,7 +42,7 @@ export function StreamLayoutSelector( { onSelectLayout2Streams, onSelectLayout3S
                 </div>
             )}
             {layoutMode === '3-stream' && (
-                <div className="w-w-120 absolute right-1 bottom-15 h-[min(22rem,36vw)] rounded-2xl border border-white/10 bg-zinc-900/95 p-3 text-zinc-100 shadow-lg backdrop-blur">
+                <div className="w-120 absolute right-1 bottom-13 h-[min(22rem,36vw)] rounded-2xl border border-white/10 bg-zinc-900/95 p-3 text-zinc-100 shadow-lg backdrop-blur">
                     <p className="mb-3 text-sm font-semibold">Layout Options</p>
                     <div className="grid grid-cols-2 gap-2">
                        
