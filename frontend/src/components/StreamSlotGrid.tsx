@@ -27,7 +27,7 @@ export function StreamSlotGrid( { streams, layout }: StreamGridProps ) {
                 <div  className={layout === 'side-by-side' ? "grid h-full grid-cols-2 " : layout === 'stacked' ? "grid h-full grid-rows-2" : "grid h-full grid-cols-2"}>
                     {streams.map((stream) => ( 
                         <div 
-                            key={stream.id}
+                            key={stream.instanceId}
                             className="min-h-0 overflow-hidden rounded-lg border border-zinc-800 bg-black shadow-sm"
                         >
                             <StreamSlot stream={stream} />
@@ -44,7 +44,7 @@ export function StreamSlotGrid( { streams, layout }: StreamGridProps ) {
                         
                             return (
                                 <div
-                                    key={stream.id}
+                                    key={stream.instanceId}
                                     className={`${baseLayout} ${layoutClass} `}
                                 >
                                     <StreamSlot stream={stream} />
@@ -57,7 +57,7 @@ export function StreamSlotGrid( { streams, layout }: StreamGridProps ) {
                 <div className="grid h-full grid-cols-2">
                     {streams.map((stream) => (
                         <div
-                            key={stream.id}
+                            key={stream.instanceId}
                             className="min-h-0 overflow-hidden rounded-lg border border-zinc-800 bg-black shadow-sm"
                         >
                             <StreamSlot stream={stream} />

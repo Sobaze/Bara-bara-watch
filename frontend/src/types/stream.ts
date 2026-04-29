@@ -1,5 +1,6 @@
 export type StreamInfo = {
-    id: number,
+    instanceId: string,
+    videoId: string,
     title: string,
     embedUrl: string,
     thumbnailUrl?: string,
@@ -7,7 +8,7 @@ export type StreamInfo = {
 }
 
 export type SearchResultInfo = {
-    id: number,
+    videoId: string,
     title: string,
     embedUrl: string,
     thumbnailUrl: string,

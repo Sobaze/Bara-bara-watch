@@ -28,7 +28,7 @@ export function SearchResultPanel({ setIsPanelOpen, searchResults, handleAddSear
             <div className="relative max-h-[70dvh] overflow-y-auto">
                     {searchResults.length > 0 ? (
                         searchResults.map(stream => (
-                            <div key={stream.id} className="border-b py-2 flex items-center gap-4 ">
+                            <div key={stream.videoId} className="border-b py-2 flex items-center gap-4 ">
                                 <img src={stream.thumbnailUrl} 
                                      alt={stream.title}
                                      className="ml-2 mb-1 h-30 w-38 shrink-0 object-cover rounded-md" 

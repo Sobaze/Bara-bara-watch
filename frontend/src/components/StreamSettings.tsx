@@ -2,7 +2,7 @@ import type { StreamInfo, ActiveLayout } from "../types/stream"
 
 type StreamsettingsProps = {
     streams: StreamInfo[],
-    onRemoveStream: (streamId: number) => void,
+    onRemoveStream: (streamId: string) => void,
     swapStream: (fromIndex: number, toIndex: number) => void,
     activeLayout: ActiveLayout,
 }
@@ -165,7 +165,7 @@ export function StreamSettings({ streams, onRemoveStream, swapStream, activeLayo
                     <div className="relative">
                         {streams.map((stream, index) => (
                             <div
-                                key={stream.id}
+                                key={stream.instanceId}
                                 className={baseCardClass}
                             >
                                 
@@ -177,7 +177,7 @@ export function StreamSettings({ streams, onRemoveStream, swapStream, activeLayo
                             </div>
                             <button
                                 type="button"
-                                onClick={() => onRemoveStream(stream.id)}
+                                onClick={() => onRemoveStream(stream.instanceId)}
                                 className="rounded-lg px-2 py-1 text-xs font-medium text-red-300 transition hover:bg-red-500/10 hover:text-red-200 absolute top-7 right-6"
                             >
                                 X
@@ -194,7 +194,7 @@ export function StreamSettings({ streams, onRemoveStream, swapStream, activeLayo
                             const positionClass = getStreamPositionClass(streams.length, activeLayout, index);
                             return (
                                 <div
-                                    key={stream.id}
+                                    key={stream.instanceId}
                                     className={`${baseCardClass} ${positionClass} `}
                                 >
                                     <div className="relative min-w-0 w-full py-4 px-4">
@@ -202,7 +202,7 @@ export function StreamSettings({ streams, onRemoveStream, swapStream, activeLayo
                                             <span className="text-xs absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 truncate font-medium text-zinc-300">{index + 1}. {stream.title}</span>
                                              <button
                                                 type="button"
-                                                onClick={() => onRemoveStream(stream.id)}
+                                                onClick={() => onRemoveStream(stream.instanceId)}
                                                 className="rounded-lg px-2 py-1 text-xs font-medium text-red-300 transition hover:bg-red-500/10 hover:text-red-200 absolute top-0.5 right-1"
                                             >
                                                 X

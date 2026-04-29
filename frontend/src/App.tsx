@@ -35,7 +35,8 @@ function App() {
       return
     }
     const newStreams: StreamInfo = {
-      id: result.id,
+      instanceId: crypto.randomUUID(),
+      videoId: result.videoId,
       title: result.title,
       embedUrl: result.embedUrl,
       thumbnailUrl: result.thumbnailUrl,
@@ -56,8 +57,9 @@ function App() {
       return updatedStreams
     });
   }
-  function handleRemoveStream(streamId: number) {
-    setStreams(prevStreams => prevStreams.filter(stream => stream.id !== streamId))
+  // think about whether this should be removing by id or index, if i wanna allow duplicate streams.
+  function handleRemoveStream(streamId: string) {
+    setStreams(prevStreams => prevStreams.filter(stream => stream.instanceId !== streamId))
   }
   return (
     <>

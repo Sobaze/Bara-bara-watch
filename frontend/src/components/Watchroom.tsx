@@ -8,7 +8,7 @@ import { StreamLayoutSelector } from "./StreamLayoutSelector";
 
 type WatchroomProps = {
     streams: StreamInfo[],
-    onRemoveStream: (streamId: number) => void,
+    onRemoveStream: (streamId: string) => void,
     swapStream: (fromIndex: number, toIndex: number) => void
 }
 
