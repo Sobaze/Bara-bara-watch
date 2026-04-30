@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { TopNavBar } from './components/TopNavBar'
 import { Watchroom } from './components/Watchroom'
 import type { StreamInfo, SearchResultInfo } from './types/stream'
-import { dummyData } from './mockData/searchResults'
+// import { dummyData } from './mockData/searchResults'
+import { fetchYoutubeSearchResults } from './api/endpoints'
 
 
 
@@ -15,19 +16,23 @@ function App() {
   const [isPanelOpen, setIsPanelOpen] = useState(false)
   
 
-  const dummyStreams = dummyData
+  // const dummyStreams = dummyData
 
-  function handleSearch(searchQuery: string) {
+  async function handleSearch(searchQuery: string) {
     if (!searchQuery) {
       setSearchResults([]);
       setIsPanelOpen(false);
       return;
     }
-    // Simulate search results
-   
-    const results = dummyStreams.filter(stream => stream.title.toLowerCase().includes(searchQuery.toLowerCase()))
-    setSearchResults(results)
-    setIsPanelOpen(true)
+    try {
+      const results = await fetchYoutubeSearchResults(searchQuery);
+      setSearchResults(results);
+      setIsPanelOpen(true);
+    } catch (err) {
+      console.error('Error fetching search results:', err);
+      setSearchResults([]);
+      setIsPanelOpen(false);
+    }
   }
 
   function handleAddSearchResultToStream(result: SearchResultInfo) {
