@@ -6,9 +6,9 @@ public class SearchResultInfo
     public string EmbedUrl { get; set; } = "";
     public string ThumbnailUrl { get; set; } = "";
     public string ChannelName { get; set; } = "";
-    public bool? IsLive { get; set; } = false;
-    public string? ViewCount { get; set; } = "";
-    public string? Description { get; set; } = "";
-    public string? PublishedAt { get; set; } = "";
-    public string? Duration { get; set; } = "";
+    public bool? IsLive { get; set; } 
+    public string? ViewCount { get; set; } 
+    public string? Description { get; set; } 
+    public string? PublishedAt { get; set; } 
+    public string? Duration { get; set; } 
 }

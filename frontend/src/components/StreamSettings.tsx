@@ -170,7 +170,7 @@ export function StreamSettings({ streams, onRemoveStream, swapStream, activeLayo
                             >
                                 
                             <div className="relative min-w-0 w-full py-4 px-4">
-                                <span className="text-xs absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 truncate font-medium text-zinc-300">{index + 1}. {stream.title}</span>
+                                <span className="absolute left-4 right-11 top-1/2 -translate-y-1/2 truncate text-xs pl-2 font-medium text-zinc-300">{index + 1}. {stream.title}</span>
                                 <div className="mb-2 grid h-25">
                                     <div className="rounded bg-zinc-600" />
                                 </div>
@@ -199,7 +199,7 @@ export function StreamSettings({ streams, onRemoveStream, swapStream, activeLayo
                                 >
                                     <div className="relative min-w-0 w-full py-4 px-4">
                                         <div className={`relative mb-2 grid ${getPreviewBoxClass(streams.length, activeLayout, index)} gap-1 pl-1 pr-1`}>
-                                            <span className="text-xs absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 truncate font-medium text-zinc-300">{index + 1}. {stream.title}</span>
+                                            <span className="absolute left-3 right-10 top-1/2 -translate-y-1/2 truncate text-xs pl-2 font-medium text-zinc-300">{index + 1}. {stream.title}</span>
                                              <button
                                                 type="button"
                                                 onClick={() => onRemoveStream(stream.instanceId)}

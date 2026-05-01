@@ -14,14 +14,13 @@ public class YoutubeController : ControllerBase
     }
 
     [HttpGet("search")]
-    public async Task<IActionResult> SearchResultAsync([FromQuery] string q)
+    public async Task<IActionResult> SearchAsync([FromQuery] string q, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(q))
         {
             return BadRequest("Query parameter 'q' is required.");
         }
-        // Implementation for searching YouTube videos
-        var results = await youtubeService.SearchResultAsync(q);
+        var results = await youtubeService.SearchAsync(q, cancellationToken);
         return Ok(results);
     }
 }

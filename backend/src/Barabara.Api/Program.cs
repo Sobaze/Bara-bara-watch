@@ -7,8 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
-builder.Services.AddScoped<YoutubeService>();
-// builder.Services.AddHttpClient<YoutubeService>();
+builder.Services.AddHttpClient<YoutubeService>();
 
 var app = builder.Build();
 
