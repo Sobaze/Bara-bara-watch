@@ -9,7 +9,8 @@ import { fetchYoutubeSearchResults } from './api/endpoints'
 
 function App() {
 
-  
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchError, setSearchError] = useState<string | null>(null)
   const [streams, setStreams] = useState<StreamInfo[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<SearchResultInfo[]>([])
@@ -22,16 +23,21 @@ function App() {
     if (!searchQuery) {
       setSearchResults([]);
       setIsPanelOpen(false);
+      setSearchError(null);
       return;
     }
     try {
+      setIsSearching(true);
+      setSearchError(null);
+      setIsPanelOpen(true);
       const results = await fetchYoutubeSearchResults(searchQuery);
       setSearchResults(results);
-      setIsPanelOpen(true);
+      setIsSearching(false);
     } catch (err) {
       console.error('Error fetching search results:', err);
+      setSearchError('Failed to fetch search results. Please try again.');
       setSearchResults([]);
-      setIsPanelOpen(false);
+      setIsSearching(false);
     }
   }
 
@@ -48,7 +54,6 @@ function App() {
     }
     setStreams(prevStreams => [...prevStreams, newStreams])
     setIsPanelOpen(false)
-    // setSearchQuery('')
   }
   function swapStream(fromIndex: number, toIndex: number) {
     setStreams(prevStreams => {
@@ -62,7 +67,6 @@ function App() {
       return updatedStreams
     });
   }
-  // think about whether this should be removing by id or index, if i wanna allow duplicate streams.
   function handleRemoveStream(streamId: string) {
     setStreams(prevStreams => prevStreams.filter(stream => stream.instanceId !== streamId))
   }
@@ -72,6 +76,8 @@ function App() {
         searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleSearch={handleSearch}
         isPanelOpen={isPanelOpen} setIsPanelOpen={setIsPanelOpen} 
         searchResults={searchResults} handleAddSearchResultToStream={handleAddSearchResultToStream} 
+        isSearching={isSearching}
+        searchError={searchError}
 
          />
       <Watchroom streams={streams} onRemoveStream={handleRemoveStream} swapStream={swapStream} />

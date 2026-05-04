@@ -11,9 +11,11 @@ type TopNavBarProps = {
     setIsPanelOpen: (open: boolean) => void
     searchResults: SearchResultInfo[]
     handleAddSearchResultToStream: (result: SearchResultInfo) => void
+    isSearching: boolean
+    searchError: string | null
 }
 
-export function TopNavBar({ items, searchQuery, setSearchQuery, handleSearch, isPanelOpen, setIsPanelOpen, searchResults, handleAddSearchResultToStream }: TopNavBarProps) {
+export function TopNavBar({ items, searchQuery, setSearchQuery, handleSearch, isPanelOpen, setIsPanelOpen, searchResults, handleAddSearchResultToStream, isSearching, searchError }: TopNavBarProps) {
 
   function handleSearchString(event: React.ChangeEvent<HTMLInputElement>) {
     setSearchQuery(event.target.value);
@@ -46,6 +48,8 @@ export function TopNavBar({ items, searchQuery, setSearchQuery, handleSearch, is
                                                 searchResults={searchResults} 
                                                 handleAddSearchResultToStream={handleAddSearchResultToStream} 
                                                 items={items}
+                                                isSearching={isSearching}
+                                                searchError={searchError}
                             />}
         </div>
       <div className="justify-self-end">
