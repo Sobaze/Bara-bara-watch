@@ -11,4 +11,5 @@ public class SearchResultInfo
     public string? Description { get; set; } 
     public string? PublishedAt { get; set; } 
     public string? Duration { get; set; } 
+    public string? CurrentViewers { get; set; } 
 }

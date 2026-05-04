@@ -17,6 +17,11 @@ export function SearchResultPanel({ setIsPanelOpen, searchResults, handleAddSear
     function handleClose() {
         setIsPanelOpen(false)
     }
+    function formatViewNumbers(viewCount: string) {
+        const num = Number(viewCount);
+        if (isNaN(num)) return viewCount; // Return original string if it's not a number
+        return num.toLocaleString('sv-SE');
+    }
 
     return (
         <div className="absolute left-1/2 -translate-x-1/2 top-full z-30 w-[min(56rem,95vw)] overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/95 text-zinc-100 shadow-xl">
@@ -50,7 +55,11 @@ export function SearchResultPanel({ setIsPanelOpen, searchResults, handleAddSear
                                             <h3 className="font-semibold flex truncate text-sm">{stream.title}</h3>
                                             <p className=" mt-1 flex text-xs text-zinc-400"> {stream.channelName} </p>
 
-                                            {stream.viewCount && (<span className="mt-1 flex text-xs text-zinc-400"> {stream.viewCount} viewers </span> )}
+                                            {!stream.isLive ? (
+                                                <span className="mt-1 flex text-xs text-zinc-400"> {formatViewNumbers(stream.viewCount)} views </span> 
+                                            ) : (
+                                                <span className="mt-1 flex text-xs text-zinc-400"> {formatViewNumbers(stream.currentViewers)} viewers </span> 
+                                            )}
                                             {stream.description && (<p className="mt-1 flex truncate text-sm text-zinc-400"> {stream.description} </p>)}
                                             <div className="mt-2 flex items-center gap-2 text-xs text-zinc-400">
                                                 {stream.isLive && ( <span className="rounded-full bg-red-500/15 px-2 py-0.5 font-medium text-red-400" > Live </span>)} 

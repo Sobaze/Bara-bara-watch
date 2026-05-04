@@ -43,6 +43,29 @@ public class YoutubeService
             logger.LogWarning("YouTube API returned an empty response or invalid data.");
             return [];
         }
+        var videoIds = searchResponseContent.Items.Select(i => i.Id.VideoId).Where(id => !string.IsNullOrWhiteSpace(id)).ToList();
+        if(videoIds.Count == 0)        {
+            logger.LogInformation("No valid video IDs found in YouTube API response.");
+            return [];
+        }
+        var videosUrl = QueryHelpers.AddQueryString("https://www.googleapis.com/youtube/v3/videos", new Dictionary<string, string?>
+        {
+            ["part"] = "snippet,contentDetails,statistics,liveStreamingDetails",
+            ["id"] = string.Join(",", videoIds),
+            ["key"] = apiKey
+        });
+        var videosDetails = await httpClient.GetAsync(videosUrl, cancellationToken);
+        if (!videosDetails.IsSuccessStatusCode)        {
+            logger.LogError("Failed to retrieve video details from YouTube API. Status code: {StatusCode}", videosDetails.StatusCode);
+            throw new InvalidOperationException("Failed to retrieve video details from YouTube API.");
+        }
+        var videosDetailsContent = await videosDetails.Content.ReadFromJsonAsync<YoutubeVideosResponse>(cancellationToken);
+        if(videosDetailsContent == null)        {
+            logger.LogWarning("YouTube API returned an empty response or invalid data for video details.");
+            return [];
+        }
+
+        var videosDict = videosDetailsContent.Items.ToDictionary(item => item.Id);
 
         var result = new List<SearchResultInfo>();
         foreach (var item in searchResponseContent.Items)
@@ -53,6 +76,7 @@ public class YoutubeService
                 logger.LogWarning("Skipping search result with missing video ID.");
                 continue;
             }
+            var videoItem = videosDict.TryGetValue(videoId, out var video) ? video : null;
             var title = item.Snippet.Title ?? "No Title";
             var channelTitle = item.Snippet.ChannelTitle ?? "Unknown Channel";
             var description = item.Snippet.Description ?? "";
@@ -60,7 +84,10 @@ public class YoutubeService
                                 ?? item.Snippet.Thumbnails?.Medium?.Url
                                 ?? item.Snippet.Thumbnails?.Default?.Url
                                 ?? $"https://img.youtube.com/vi/{videoId}/hqdefault.jpg";
-            
+            var isLive = videoItem?.Snippet.LiveBroadcastContent == "live";
+            var viewCount = videoItem?.Statistics?.ViewCount;
+            var duration = videoItem?.ContentDetails?.Duration;
+            var currentViewers = videoItem?.LiveStreamingDetails?.ConcurrentViewers;
 
             result.Add(new SearchResultInfo
             {
@@ -71,6 +98,10 @@ public class YoutubeService
                 ChannelName = channelTitle,
                 Description = description,
                 PublishedAt = item.Snippet.PublishedAt?.ToString("O"),
+                IsLive = isLive,
+                ViewCount = viewCount,
+                Duration = duration,
+                CurrentViewers = currentViewers
             }); 
         }
         return result;
