@@ -14,8 +14,8 @@ export type SearchResultInfo = {
     thumbnailUrl: string,
     channelName: string,
     isLive?: boolean,
-    viewCount: string,
-    currentViewers: string,
+    viewCount?: string,
+    currentViewers?: string,
     description?: string,
     publishedAt?: string,
     duration?: string

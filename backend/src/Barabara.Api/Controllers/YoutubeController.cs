@@ -20,7 +20,23 @@ public class YoutubeController : ControllerBase
         {
             return BadRequest("Query parameter 'q' is required.");
         }
-        var results = await youtubeService.SearchAsync(q, cancellationToken);
-        return Ok(results);
+        try
+        {
+            var results = await youtubeService.SearchAsync(q, cancellationToken);
+            return Ok(results);
+        } catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return StatusCode(502, ex.Message);
+        }
+         catch (Exception ex)
+        {
+            // Log the exception details for debugging
+            // logger.LogError(ex, "An unexpected error occurred while processing the YouTube search request.");
+            return StatusCode(500, "An unexpected error occurred. Please try again later.");
+        }
     }
 }

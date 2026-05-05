@@ -8,22 +8,18 @@ public class YoutubeService
     private readonly string apiKey;
     private readonly HttpClient httpClient;
     private readonly ILogger<YoutubeService> logger;
-    
-    public YoutubeService(HttpClient httpClient, IConfiguration configuration, ILogger<YoutubeService> logger)
+
+    private const string SearchEndpoint = "https://www.googleapis.com/youtube/v3/search";
+    private const string VideosEndpoint = "https://www.googleapis.com/youtube/v3/videos";
+
+    private async Task<YoutubeSearchResponse> GetSearchResponseAsync(string query, CancellationToken cancellationToken)
     {
-        this.httpClient = httpClient;
-        this.logger = logger;
-        apiKey = configuration["YouTube:ApiKey"] ?? throw new ArgumentNullException("YouTubeApiKey is not configured.");
-    }
-    public async Task<List<SearchResultInfo>> SearchAsync(string query, CancellationToken cancellationToken)
-    {
-        
         var searchString = query.Trim();
         if (string.IsNullOrWhiteSpace(searchString))
         {
             throw new ArgumentException("Search string cannot be null or empty.", nameof(query));
         }
-        var url = QueryHelpers.AddQueryString("https://www.googleapis.com/youtube/v3/search", new Dictionary<string, string?>
+        var url = QueryHelpers.AddQueryString(SearchEndpoint, new Dictionary<string, string?>
         {
             ["part"] = "snippet",
             ["q"] = searchString,
@@ -38,35 +34,46 @@ public class YoutubeService
             throw new InvalidOperationException("Failed to retrieve search results from YouTube API.");
         }
         var searchResponseContent = await searchRequest.Content.ReadFromJsonAsync<YoutubeSearchResponse>(cancellationToken);
-        if(searchResponseContent == null)
+        if (searchResponseContent == null)
         {
             logger.LogWarning("YouTube API returned an empty response or invalid data.");
-            return [];
+            return new YoutubeSearchResponse(); 
         }
+        return searchResponseContent;
+    }
+    private async Task<Dictionary<string, YoutubeVideoItem>> GetVideoDetailsAsync(YoutubeSearchResponse searchResponseContent, CancellationToken cancellationToken)
+    {
         var videoIds = searchResponseContent.Items.Select(i => i.Id.VideoId).Where(id => !string.IsNullOrWhiteSpace(id)).ToList();
-        if(videoIds.Count == 0)        {
+        if (videoIds.Count == 0)
+        {
             logger.LogInformation("No valid video IDs found in YouTube API response.");
             return [];
         }
-        var videosUrl = QueryHelpers.AddQueryString("https://www.googleapis.com/youtube/v3/videos", new Dictionary<string, string?>
+        var videosUrl = QueryHelpers.AddQueryString(VideosEndpoint, new Dictionary<string, string?>
         {
             ["part"] = "snippet,contentDetails,statistics,liveStreamingDetails",
             ["id"] = string.Join(",", videoIds),
             ["key"] = apiKey
         });
         var videosDetails = await httpClient.GetAsync(videosUrl, cancellationToken);
-        if (!videosDetails.IsSuccessStatusCode)        {
+        if (!videosDetails.IsSuccessStatusCode)
+        {
             logger.LogError("Failed to retrieve video details from YouTube API. Status code: {StatusCode}", videosDetails.StatusCode);
-            throw new InvalidOperationException("Failed to retrieve video details from YouTube API.");
+            return [];
         }
         var videosDetailsContent = await videosDetails.Content.ReadFromJsonAsync<YoutubeVideosResponse>(cancellationToken);
-        if(videosDetailsContent == null)        {
+        if (videosDetailsContent == null)        
+        {
             logger.LogWarning("YouTube API returned an empty response or invalid data for video details.");
             return [];
         }
 
         var videosDict = videosDetailsContent.Items.ToDictionary(item => item.Id);
-
+        return videosDict;
+    }
+    
+    private List<SearchResultInfo> MapSearchResults(YoutubeSearchResponse searchResponseContent, Dictionary<string, YoutubeVideoItem> videosDict)
+    {
         var result = new List<SearchResultInfo>();
         foreach (var item in searchResponseContent.Items)
         {
@@ -104,6 +111,20 @@ public class YoutubeService
                 CurrentViewers = currentViewers
             }); 
         }
+        return result;
+    }
+    public YoutubeService(HttpClient httpClient, IConfiguration configuration, ILogger<YoutubeService> logger)
+    {
+        this.httpClient = httpClient;
+        this.logger = logger;
+        apiKey = configuration["YouTube:ApiKey"] ?? throw new ArgumentNullException("YouTubeApiKey is not configured.");
+    }
+    public async Task<List<SearchResultInfo>> SearchAsync(string query, CancellationToken cancellationToken)
+    {
+        var searchResponseContent = await GetSearchResponseAsync(query, cancellationToken);
+        var videosDict = await GetVideoDetailsAsync(searchResponseContent, cancellationToken);
+
+        var result = MapSearchResults(searchResponseContent, videosDict);
         return result;
     }
 }
