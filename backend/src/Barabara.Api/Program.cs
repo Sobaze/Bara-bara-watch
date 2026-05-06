@@ -8,6 +8,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddHttpClient<YoutubeService>();
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 

@@ -32,10 +32,8 @@ public class YoutubeController : ControllerBase
         {
             return StatusCode(502, ex.Message);
         }
-         catch (Exception ex)
+         catch (Exception)
         {
-            // Log the exception details for debugging
-            // logger.LogError(ex, "An unexpected error occurred while processing the YouTube search request.");
             return StatusCode(500, "An unexpected error occurred. Please try again later.");
         }
     }

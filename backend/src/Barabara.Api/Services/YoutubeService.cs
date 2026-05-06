@@ -3,22 +3,51 @@ namespace Barabara.Api.Services;
 using Barabara.Api.Models;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Caching.Memory;
+
 public class YoutubeService
 {
+    private const string SearchEndpoint = "https://www.googleapis.com/youtube/v3/search";
+    private const string VideosEndpoint = "https://www.googleapis.com/youtube/v3/videos";
     private readonly string apiKey;
     private readonly HttpClient httpClient;
     private readonly ILogger<YoutubeService> logger;
+    private readonly IMemoryCache cache; 
 
-    private const string SearchEndpoint = "https://www.googleapis.com/youtube/v3/search";
-    private const string VideosEndpoint = "https://www.googleapis.com/youtube/v3/videos";
+    public YoutubeService(HttpClient httpClient, IConfiguration configuration, ILogger<YoutubeService> logger, IMemoryCache cache)
+    {
+        this.httpClient = httpClient;
+        this.logger = logger;
+        apiKey = configuration["YouTube:ApiKey"] ?? throw new ArgumentNullException("YouTubeApiKey is not configured.");
+        this.cache = cache;
+    }
 
-    private async Task<YoutubeSearchResponse> GetSearchResponseAsync(string query, CancellationToken cancellationToken)
+    public async Task<List<SearchResultInfo>> SearchAsync(string query, CancellationToken cancellationToken)
     {
         var searchString = query.Trim();
         if (string.IsNullOrWhiteSpace(searchString))
         {
             throw new ArgumentException("Search string cannot be null or empty.", nameof(query));
         }
+
+        var cachedKey = BuildCachedKey(searchString);
+        var cachedResults = TryGetCachedResults(cachedKey);
+        if (cachedResults != null)
+        {
+            return cachedResults;
+        }
+        var searchResponseContent = await GetSearchResponseAsync(searchString, cancellationToken);
+        var videosDict = await GetVideoDetailsAsync(searchResponseContent, cancellationToken);
+
+        var result = MapSearchResults(searchResponseContent, videosDict);
+        cache.Set(cachedKey, result, TimeSpan.FromMinutes(3));
+
+        return result;
+    }
+
+    private async Task<YoutubeSearchResponse> GetSearchResponseAsync(string query, CancellationToken cancellationToken)
+    {
+        var searchString = query;
         var url = QueryHelpers.AddQueryString(SearchEndpoint, new Dictionary<string, string?>
         {
             ["part"] = "snippet",
@@ -30,7 +59,7 @@ public class YoutubeService
         var searchRequest = await httpClient.GetAsync(url, cancellationToken);
         if (!searchRequest.IsSuccessStatusCode)
         {
-            logger.LogError("Youtube Api request failed with status code {StatusCode} ", searchRequest.StatusCode);
+            logger.LogError("Youtube API request failed with status code {StatusCode} ", searchRequest.StatusCode);
             throw new InvalidOperationException("Failed to retrieve search results from YouTube API.");
         }
         var searchResponseContent = await searchRequest.Content.ReadFromJsonAsync<YoutubeSearchResponse>(cancellationToken);
@@ -41,6 +70,7 @@ public class YoutubeService
         }
         return searchResponseContent;
     }
+    
     private async Task<Dictionary<string, YoutubeVideoItem>> GetVideoDetailsAsync(YoutubeSearchResponse searchResponseContent, CancellationToken cancellationToken)
     {
         var videoIds = searchResponseContent.Items.Select(i => i.Id.VideoId).Where(id => !string.IsNullOrWhiteSpace(id)).ToList();
@@ -62,7 +92,7 @@ public class YoutubeService
             return [];
         }
         var videosDetailsContent = await videosDetails.Content.ReadFromJsonAsync<YoutubeVideosResponse>(cancellationToken);
-        if (videosDetailsContent == null)        
+        if (videosDetailsContent == null)
         {
             logger.LogWarning("YouTube API returned an empty response or invalid data for video details.");
             return [];
@@ -113,18 +143,22 @@ public class YoutubeService
         }
         return result;
     }
-    public YoutubeService(HttpClient httpClient, IConfiguration configuration, ILogger<YoutubeService> logger)
+   
+    private List<SearchResultInfo>? TryGetCachedResults(string cachedKey)
     {
-        this.httpClient = httpClient;
-        this.logger = logger;
-        apiKey = configuration["YouTube:ApiKey"] ?? throw new ArgumentNullException("YouTubeApiKey is not configured.");
+        if (cache.TryGetValue(cachedKey, out List<SearchResultInfo>? cachedResult))
+        {
+            logger.LogInformation("Returning cached search results for query: {Query}", cachedKey);
+            return cachedResult;
+        }
+        return null;
     }
-    public async Task<List<SearchResultInfo>> SearchAsync(string query, CancellationToken cancellationToken)
-    {
-        var searchResponseContent = await GetSearchResponseAsync(query, cancellationToken);
-        var videosDict = await GetVideoDetailsAsync(searchResponseContent, cancellationToken);
 
-        var result = MapSearchResults(searchResponseContent, videosDict);
-        return result;
+    private static string BuildCachedKey(string query)
+    {
+        var searchQuery = query.ToLowerInvariant();
+        var cachedKeyString = $"youtube-search:{searchQuery}";
+        return cachedKeyString;
     }
+    
 }
