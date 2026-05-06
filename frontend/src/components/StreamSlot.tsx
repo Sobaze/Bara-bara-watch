@@ -1,16 +1,15 @@
-import type { StreamInfo } from "../types/stream"
+import type { StreamInfo } from '../types/stream'
 
 type StreamSlotProps = {
-    stream: StreamInfo,
+  stream: StreamInfo
 }
-export function StreamSlot({ stream}: StreamSlotProps) {
-    return (
-        <iframe
-            src={stream.embedUrl}
-            title={stream.title}
-            className="w-full h-full"
-            allowFullScreen
-        >
-        </iframe>
-    )
+export function StreamSlot({ stream }: StreamSlotProps) {
+  return (
+    <iframe
+      src={stream.embedUrl}
+      title={stream.title}
+      className="w-full h-full"
+      allowFullScreen
+    ></iframe>
+  )
 }

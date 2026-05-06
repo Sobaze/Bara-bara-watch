@@ -24,7 +24,8 @@ public class YoutubeController : ControllerBase
         {
             var results = await youtubeService.SearchAsync(q, cancellationToken);
             return Ok(results);
-        } catch (ArgumentException ex)
+        }
+        catch (ArgumentException ex)
         {
             return BadRequest(ex.Message);
         }
@@ -32,7 +33,7 @@ public class YoutubeController : ControllerBase
         {
             return StatusCode(502, ex.Message);
         }
-         catch (Exception)
+        catch (Exception)
         {
             return StatusCode(500, "An unexpected error occurred. Please try again later.");
         }

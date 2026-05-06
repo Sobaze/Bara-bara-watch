@@ -1,24 +1,24 @@
 export type StreamInfo = {
-    instanceId: string,
-    videoId: string,
-    title: string,
-    embedUrl: string,
-    thumbnailUrl?: string,
-    channelName?: string
+  instanceId: string
+  videoId: string
+  title: string
+  embedUrl: string
+  thumbnailUrl?: string
+  channelName?: string
 }
 
 export type SearchResultInfo = {
-    videoId: string,
-    title: string,
-    embedUrl: string,
-    thumbnailUrl: string,
-    channelName: string,
-    isLive?: boolean,
-    viewCount?: string,
-    currentViewers?: string,
-    description?: string,
-    publishedAt?: string,
-    duration?: string
+  videoId: string
+  title: string
+  embedUrl: string
+  thumbnailUrl: string
+  channelName: string
+  isLive?: boolean
+  viewCount?: string
+  currentViewers?: string
+  description?: string
+  publishedAt?: string
+  duration?: string
 }
 
 export type TwoStreamLayout = 'side-by-side' | 'stacked'
