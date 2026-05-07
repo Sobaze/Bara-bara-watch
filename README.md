@@ -2,6 +2,10 @@
 
 Bara-bara-watch is a multi-watch web app where you can watch multiple YouTube videos at once.
 
+## Demo
+
+[Watch Demo](assets/demo.mp4)
+
 ## Features
 
 - Search for different videos from YouTube and add them to one the available watchroom slots to watch.
