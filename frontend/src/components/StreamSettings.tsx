@@ -9,19 +9,19 @@ import {
   getPreviewBoxClass,
 } from '../utils/streamSettingsLayout'
 
-type StreamsettingsProps = {
+type StreamSettingsProps = {
   streams: StreamInfo[]
   onRemoveStream: (streamId: string) => void
-  swapStream: (fromIndex: number, toIndex: number) => void
+  onSwapStream: (fromIndex: number, toIndex: number) => void
   activeLayout: ActiveLayout
 }
 
 export function StreamSettings({
   streams,
   onRemoveStream,
-  swapStream,
+  onSwapStream,
   activeLayout,
-}: StreamsettingsProps) {
+}: StreamSettingsProps) {
   const baseCardClass =
     'relative rounded-xl border border-white/10 bg-zinc-800 px-3 py-3'
   const containerClass = getSettingsGridClass(streams.length, activeLayout)
@@ -98,7 +98,7 @@ export function StreamSettings({
                   {moveTargets.up !== undefined && (
                     <button
                       type="button"
-                      onClick={() => swapStream(index, moveTargets.up!)}
+                      onClick={() => onSwapStream(index, moveTargets.up!)}
                       className={`${baseArrowClass} ${getArrowPositionClass('up', streams.length, activeLayout, index, moveTargets.up!)} `}
                     >
                       {getArrowLabel(
@@ -113,7 +113,7 @@ export function StreamSettings({
                   {moveTargets.down !== undefined && (
                     <button
                       type="button"
-                      onClick={() => swapStream(index, moveTargets.down!)}
+                      onClick={() => onSwapStream(index, moveTargets.down!)}
                       className={`${baseArrowClass} ${getArrowPositionClass('down', streams.length, activeLayout, index, moveTargets.down!)} `}
                     >
                       {getArrowLabel(
@@ -128,7 +128,7 @@ export function StreamSettings({
                   {moveTargets.left !== undefined && (
                     <button
                       type="button"
-                      onClick={() => swapStream(index, moveTargets.left!)}
+                      onClick={() => onSwapStream(index, moveTargets.left!)}
                       className={`${baseArrowClass} ${getArrowPositionClass('left', streams.length, activeLayout, index, moveTargets.left!)}`}
                     >
                       {getArrowLabel(
@@ -143,7 +143,7 @@ export function StreamSettings({
                   {moveTargets.right !== undefined && (
                     <button
                       type="button"
-                      onClick={() => swapStream(index, moveTargets.right!)}
+                      onClick={() => onSwapStream(index, moveTargets.right!)}
                       className={`${baseArrowClass} ${getArrowPositionClass('right', streams.length, activeLayout, index, moveTargets.right!)}`}
                     >
                       {getArrowLabel(

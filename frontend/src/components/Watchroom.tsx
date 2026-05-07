@@ -13,13 +13,13 @@ import { StreamLayoutSelector } from './StreamLayoutSelector'
 type WatchroomProps = {
   streams: StreamInfo[]
   onRemoveStream: (streamId: string) => void
-  swapStream: (fromIndex: number, toIndex: number) => void
+  onSwapStream: (fromIndex: number, toIndex: number) => void
 }
 
 export function Watchroom({
   streams,
   onRemoveStream,
-  swapStream,
+  onSwapStream,
 }: WatchroomProps) {
   const fullScreenRef = useRef<HTMLDivElement>(null)
   const hideControlsTimeoutRef = useRef<number | null>(null)
@@ -52,7 +52,7 @@ export function Watchroom({
     }
   }, [])
 
-  function fullScreenStream() {
+  function handleFullScreenStream() {
     fullScreenRef.current?.requestFullscreen()
   }
 
@@ -126,7 +126,7 @@ export function Watchroom({
             <StreamSettings
               streams={streams}
               onRemoveStream={onRemoveStream}
-              swapStream={swapStream}
+              onSwapStream={onSwapStream}
               activeLayout={activeLayout}
             />
           </div>
@@ -150,7 +150,9 @@ export function Watchroom({
           </button>
           <button
             type="button"
-            onClick={isFullScreen ? handleExitFullScreen : fullScreenStream}
+            onClick={
+              isFullScreen ? handleExitFullScreen : handleFullScreenStream
+            }
             className="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-200"
           >
             {isFullScreen ? 'Exit Full Screen' : 'Full Screen'}

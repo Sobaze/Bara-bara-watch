@@ -2,27 +2,27 @@ import { SearchResultPanel } from './SearchResultPanel'
 import type { SearchResultInfo } from '../types/stream'
 
 type TopNavBarProps = {
-  items: number
+  streamCount: number
   searchQuery: string
   setSearchQuery: (query: string) => void
   handleSearch: (query: string) => void
   isPanelOpen: boolean
   setIsPanelOpen: (open: boolean) => void
   searchResults: SearchResultInfo[]
-  handleAddSearchResultToStream: (result: SearchResultInfo) => void
+  onAddSearchResult: (result: SearchResultInfo) => void
   isSearching: boolean
   searchError: string | null
 }
 
 export function TopNavBar({
-  items,
+  streamCount,
   searchQuery,
   setSearchQuery,
   handleSearch,
   isPanelOpen,
   setIsPanelOpen,
   searchResults,
-  handleAddSearchResultToStream,
+  onAddSearchResult,
   isSearching,
   searchError,
 }: TopNavBarProps) {
@@ -55,8 +55,8 @@ export function TopNavBar({
           <SearchResultPanel
             setIsPanelOpen={setIsPanelOpen}
             searchResults={searchResults}
-            handleAddSearchResultToStream={handleAddSearchResultToStream}
-            items={items}
+            onAddSearchResult={onAddSearchResult}
+            streamCount={streamCount}
             isSearching={isSearching}
             searchError={searchError}
           />
@@ -64,7 +64,7 @@ export function TopNavBar({
       </div>
       <div className="justify-self-end">
         <p className="text-sm font-medium whitespace-nowrap pr-2">
-          Available povs: {items} / 4
+          Available povs: {streamCount} / 4
         </p>
       </div>
     </nav>

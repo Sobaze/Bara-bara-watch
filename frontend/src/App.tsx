@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { TopNavBar } from './components/TopNavBar'
 import { Watchroom } from './components/Watchroom'
 import type { StreamInfo, SearchResultInfo } from './types/stream'
 import { fetchYoutubeSearchResults } from './api/endpoints'
-
 function App() {
+  const latestSearchRequestRef = useRef(0)
   const [isSearching, setIsSearching] = useState(false)
   const [searchError, setSearchError] = useState<string | null>(null)
   const [streams, setStreams] = useState<StreamInfo[]>([])
@@ -12,32 +12,40 @@ function App() {
   const [searchResults, setSearchResults] = useState<SearchResultInfo[]>([])
   const [isPanelOpen, setIsPanelOpen] = useState(false)
 
-  async function handleSearch(searchQuery: string) {
-    if (!searchQuery) {
+  async function handleSearch(searchQueryString: string) {
+    const requestId = latestSearchRequestRef.current + 1
+    latestSearchRequestRef.current = requestId
+    if (!searchQueryString) {
       setSearchResults([])
       setIsPanelOpen(false)
       setSearchError(null)
+      setIsSearching(false)
       return
     }
     try {
       setIsSearching(true)
       setSearchError(null)
       setIsPanelOpen(true)
-      const results = await fetchYoutubeSearchResults(searchQuery)
+      const results = await fetchYoutubeSearchResults(searchQueryString)
+      if (latestSearchRequestRef.current !== requestId) {
+        return
+      }
       setSearchResults(results)
     } catch (err) {
+      if (latestSearchRequestRef.current !== requestId) {
+        return
+      }
       console.error('Error fetching search results:', err)
       setSearchError('Failed to fetch search results. Please try again.')
       setSearchResults([])
     } finally {
-      setIsSearching(false)
+      if (latestSearchRequestRef.current === requestId) {
+        setIsSearching(false)
+      }
     }
   }
 
   function handleAddSearchResultToStream(result: SearchResultInfo) {
-    if (streams.length >= 4) {
-      return
-    }
     const newStreams: StreamInfo = {
       instanceId: crypto.randomUUID(),
       videoId: result.videoId,
@@ -81,21 +89,21 @@ function App() {
   return (
     <>
       <TopNavBar
-        items={streams.length}
+        streamCount={streams.length}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         handleSearch={handleSearch}
         isPanelOpen={isPanelOpen}
         setIsPanelOpen={setIsPanelOpen}
         searchResults={searchResults}
-        handleAddSearchResultToStream={handleAddSearchResultToStream}
+        onAddSearchResult={handleAddSearchResultToStream}
         isSearching={isSearching}
         searchError={searchError}
       />
       <Watchroom
         streams={streams}
         onRemoveStream={handleRemoveStream}
-        swapStream={swapStream}
+        onSwapStream={swapStream}
       />
     </>
   )

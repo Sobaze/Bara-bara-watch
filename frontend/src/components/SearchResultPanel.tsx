@@ -4,8 +4,8 @@ import { SearchResultRow } from './SearchResultRow'
 type SearchResultPanelProps = {
   setIsPanelOpen: (visible: boolean) => void
   searchResults: SearchResultInfo[]
-  handleAddSearchResultToStream: (result: SearchResultInfo) => void
-  items: number
+  onAddSearchResult: (result: SearchResultInfo) => void
+  streamCount: number
   isSearching: boolean
   searchError: string | null
 }
@@ -13,8 +13,8 @@ type SearchResultPanelProps = {
 export function SearchResultPanel({
   setIsPanelOpen,
   searchResults,
-  handleAddSearchResultToStream,
-  items,
+  onAddSearchResult,
+  streamCount,
   isSearching,
   searchError,
 }: SearchResultPanelProps) {
@@ -48,8 +48,8 @@ export function SearchResultPanel({
             <SearchResultRow
               key={stream.videoId}
               stream={stream}
-              items={items}
-              handleAddSearchResultToStream={handleAddSearchResultToStream}
+              currStreamCount={streamCount}
+              onAddSearchResult={onAddSearchResult}
             />
           ))
         ) : (
