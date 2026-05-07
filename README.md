@@ -4,7 +4,8 @@ Bara-bara-watch is a multi-watch web app where you can watch multiple YouTube vi
 
 ## Demo
 
-[Watch Demo](assets/demo.mp4)
+https://github.com/user-attachments/assets/51b7579d-6e93-4f21-aeeb-bc5b3a521a48
+
 
 ## Features
 
@@ -77,6 +78,9 @@ dotnet run
 ```
 
 Or from backend folder:
+
+
+
 
 ```
 dotnet run --project src/Barabara.Api
