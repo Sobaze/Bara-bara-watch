@@ -83,7 +83,6 @@ dotnet run --project src/Barabara.Api
 Frontend checks:
 
 ```bash
-
 cd frontend
 npm run format:check
 npm run lint
@@ -108,7 +107,7 @@ dotnet build --no-restore
 
 ## Planned Features
 
-- Being able to add a YouTube video by a direct url as well instead of searching.
-- Having a group of YouTube channel names to search for just their videos or if they are live streaming.
-- Play all videos at once with a button.
-- Mute/unmute videos by 1,2,3,4 buttons or something similar.
+- Add YouTube videos directly by URL
+- Search/filter by saved YouTube channel groups
+- Play/pause all videos with one control.
+- Mute/unmute individual videos with keyboard shortcuts.

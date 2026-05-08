@@ -64,7 +64,7 @@ export function TopNavBar({
       </div>
       <div className="justify-self-end">
         <p className="text-sm font-medium whitespace-nowrap pr-2">
-          Available povs: {streamCount} / 4
+          Active streams: {streamCount} / 4
         </p>
       </div>
     </nav>

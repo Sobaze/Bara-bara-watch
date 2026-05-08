@@ -48,7 +48,7 @@ export function SearchResultPanel({
             <SearchResultRow
               key={stream.videoId}
               stream={stream}
-              currStreamCount={streamCount}
+              streamCount={streamCount}
               onAddSearchResult={onAddSearchResult}
             />
           ))

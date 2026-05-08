@@ -3,7 +3,7 @@ import type { SearchResultInfo } from '../types/stream'
 type SearchResultRowProps = {
   stream: SearchResultInfo
   onAddSearchResult: (result: SearchResultInfo) => void
-  currStreamCount: number
+  streamCount: number
 }
 function formatViewNumbers(viewCount?: string) {
   const num = Number(viewCount)
@@ -13,7 +13,7 @@ function formatViewNumbers(viewCount?: string) {
 
 export function SearchResultRow({
   stream,
-  currStreamCount,
+  streamCount,
   onAddSearchResult,
 }: SearchResultRowProps) {
   return (
@@ -48,7 +48,7 @@ export function SearchResultRow({
           )}
         </div>
       </div>
-      {currStreamCount < 4 && (
+      {streamCount < 4 && (
         <button
           onClick={() => onAddSearchResult(stream)}
           className="shrink-0 mr-2 py-2 text-sm font-medium bg-green-500 text-white rounded-md hover:bg-green-600"
