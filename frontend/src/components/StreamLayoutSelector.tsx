@@ -45,7 +45,7 @@ export function StreamLayoutSelector({
             <LayoutSelectorCard
               label="Main on Left"
               previewClassName="mb-2 grid h-20 grid-rows-2 grid-cols-2 gap-1"
-              mainPos="rounded bg-zinc-600 row-span-2"
+              mainBoxClassName="rounded bg-zinc-600 row-span-2"
               layoutMode={layoutMode}
               onClick={() => onSelectLayout3Streams('main-on-left')}
             />
@@ -53,7 +53,7 @@ export function StreamLayoutSelector({
             <LayoutSelectorCard
               label="Main on Top"
               previewClassName="mb-2 grid h-20 grid-cols-2 grid-rows-2 gap-1"
-              mainPos="rounded bg-zinc-600 col-span-2"
+              mainBoxClassName="rounded bg-zinc-600 col-span-2"
               layoutMode={layoutMode}
               onClick={() => onSelectLayout3Streams('main-on-top')}
             />

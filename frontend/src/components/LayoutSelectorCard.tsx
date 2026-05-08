@@ -2,7 +2,7 @@ import type { LayoutMode } from '../types/stream'
 type LayoutSelectorCardProps = {
   label: string
   previewClassName: string
-  mainPos?: string
+  mainBoxClassName?: string
   layoutMode: LayoutMode
   onClick: () => void
 }
@@ -11,7 +11,7 @@ export function LayoutSelectorCard({
   previewClassName,
   layoutMode,
   onClick,
-  mainPos,
+  mainBoxClassName,
 }: LayoutSelectorCardProps) {
   return (
     <>
@@ -35,7 +35,7 @@ export function LayoutSelectorCard({
           onClick={onClick}
         >
           <div className={previewClassName}>
-            <div className={mainPos} />
+            <div className={mainBoxClassName} />
             <div className="rounded bg-zinc-600" />
             <div className="rounded bg-zinc-600" />
           </div>

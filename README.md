@@ -8,11 +8,9 @@ https://github.com/user-attachments/assets/51b7579d-6e93-4f21-aeeb-bc5b3a521a48
 
 ## Features
 
-- Search for different videos from YouTube and add them to one the available watchroom slots to watch.
+- Search for different videos from YouTube and add them to one of the available watchroom slots to watch.
 
 - Add up to four videos, with the top navigation showing the current stream count.
-
-- Search results include video title, channel name, views/current viewers, description, and an add button when room is available.
 
 - Search results include video title, channel name, views/current viewers, description, and an add button when room is available.
 
@@ -20,9 +18,9 @@ https://github.com/user-attachments/assets/51b7579d-6e93-4f21-aeeb-bc5b3a521a48
 
 ### Layouts
 
-Streams can be shown side-by-side or stacked vertically.
-
 #### 2-Stream cases:
+
+Streams can be shown side-by-side or stacked vertically.
 
 One stream can be shown as the main stream, either on the left or on top, with the remaining two streams arranged beside or below it.
 
