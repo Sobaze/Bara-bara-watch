@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "test": "vitest"
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",

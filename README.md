@@ -22,11 +22,9 @@ https://github.com/user-attachments/assets/51b7579d-6e93-4f21-aeeb-bc5b3a521a48
 
 Streams can be shown side-by-side or stacked vertically.
 
-One stream can be shown as the main stream, either on the left or on top, with the remaining two streams arranged beside or below it.
-
 #### 3-Stream cases:
 
-User can decide if they want to "main" stream to be on the left and the other 2 being stacked to the right or they can have the "main" being on top with the other 2 below it.
+One stream can be shown as the main stream, either on the left or on top, with the remaining two streams arranged beside or below it.
 
 ### Stream settings
 
@@ -45,7 +43,7 @@ Depending on the selected layout and amount of streams the layout inside this al
 
 To run the front end you should from the root dev do the following commands:
 
-```
+```bash
 cd frontend
 npm install
 npm run dev
@@ -53,16 +51,16 @@ npm run dev
 
 To format and validate the frontend:
 
-```
+```bash
 npm run format
-npm run format:check // this is to just check it without doing any changes to the files
+npm run format:check # this is to just check it without doing any changes to the files
 ```
 
 ### Backend
 
 To get the backend running, you must first get a user-secrets setup with the YouTube Data API v3 going. On the Google cloud console and use that key credential as your secret.
 
-```
+```bash
 cd backend/src/Barabara.Api
 dotnet user-secrets init
 dotnet user-secrets set "YouTube:ApiKey" "YOUR_YOUTUBE_V3_API_KEY"
@@ -70,14 +68,35 @@ dotnet user-secrets set "YouTube:ApiKey" "YOUR_YOUTUBE_V3_API_KEY"
 
 Then to run the project from the backend/src/Barabara.Api folder:
 
-```
+```bash
 dotnet run
 ```
 
 Or from backend folder:
 
-```
+```bash
 dotnet run --project src/Barabara.Api
+```
+
+### Validation
+
+Frontend checks:
+
+```bash
+
+cd frontend
+npm run format:check
+npm run lint
+npm run build
+npm run test:run
+```
+
+Backend checks:
+
+```bash
+cd backend
+dotnet restore
+dotnet build --no-restore
 ```
 
 ## Current Limitations
