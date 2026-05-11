@@ -38,4 +38,29 @@ public class YoutubeController : ControllerBase
             return StatusCode(500, "An unexpected error occurred. Please try again later.");
         }
     }
+    [HttpGet("video")]
+    public async Task<IActionResult> GetVideoByInputAsync([FromQuery] string input, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            return BadRequest("Input parameter is required");
+        }
+        try
+        {
+            var results = await youtubeService.GetVideoByInputAsync(input, cancellationToken);
+            return Ok(results);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return StatusCode(502, ex.Message);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An unexpected error occurred. Please try again later.");
+        }
+    }
 }

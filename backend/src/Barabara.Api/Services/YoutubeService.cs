@@ -12,7 +12,7 @@ public class YoutubeService
     private readonly string apiKey;
     private readonly HttpClient httpClient;
     private readonly ILogger<YoutubeService> logger;
-    private readonly IMemoryCache cache; 
+    private readonly IMemoryCache cache;
 
     public YoutubeService(HttpClient httpClient, IConfiguration configuration, ILogger<YoutubeService> logger, IMemoryCache cache)
     {
@@ -44,6 +44,40 @@ public class YoutubeService
 
         return result;
     }
+    public async Task<SearchResultInfo> GetVideoByInputAsync(string input, CancellationToken cancellationToken)
+    {
+        var inputString = input;
+
+        var extractedVideoId = ExtractVideoIdFromInput(inputString);
+        if (string.IsNullOrWhiteSpace(extractedVideoId))
+        {
+            logger.LogWarning("Video ID not found");
+            throw new ArgumentException("Could not find video with URL");
+        }
+        var videosUrl = QueryHelpers.AddQueryString(VideosEndpoint, new Dictionary<string, string?>
+        {
+            ["part"] = "snippet,contentDetails,statistics,liveStreamingDetails",
+            ["id"] = extractedVideoId,
+            ["key"] = apiKey
+        });
+        var videosByUrlDetails = await httpClient.GetAsync(videosUrl, cancellationToken);
+        if (!videosByUrlDetails.IsSuccessStatusCode)
+        {
+            logger.LogError("Failed to retrieve video details from the ID from the URL");
+            throw new InvalidOperationException("Failed to retrieve video details");
+        }
+        var videoDetailsContent = await videosByUrlDetails.Content.ReadFromJsonAsync<YoutubeVideosResponse>(cancellationToken);
+        var video = videoDetailsContent?.Items.FirstOrDefault();
+        if (video == null)
+        {
+            logger.LogError("YouTube API returned an empty response for the ID from the URL");
+            throw new InvalidOperationException("Video not found");
+        }
+        var mappedResultVideo = MapVideoByInput(video);
+
+        return mappedResultVideo;
+
+    }
 
     private async Task<YoutubeSearchResponse> GetSearchResponseAsync(string query, CancellationToken cancellationToken)
     {
@@ -66,11 +100,11 @@ public class YoutubeService
         if (searchResponseContent == null)
         {
             logger.LogWarning("YouTube API returned an empty response or invalid data.");
-            return new YoutubeSearchResponse(); 
+            return new YoutubeSearchResponse();
         }
         return searchResponseContent;
     }
-    
+
     private async Task<Dictionary<string, YoutubeVideoItem>> GetVideoDetailsAsync(YoutubeSearchResponse searchResponseContent, CancellationToken cancellationToken)
     {
         var videoIds = searchResponseContent.Items.Select(i => i.Id.VideoId).Where(id => !string.IsNullOrWhiteSpace(id)).ToList();
@@ -101,7 +135,8 @@ public class YoutubeService
         var videosDict = videosDetailsContent.Items.ToDictionary(item => item.Id);
         return videosDict;
     }
-    
+
+
     private List<SearchResultInfo> MapSearchResults(YoutubeSearchResponse searchResponseContent, Dictionary<string, YoutubeVideoItem> videosDict)
     {
         var result = new List<SearchResultInfo>();
@@ -139,11 +174,35 @@ public class YoutubeService
                 ViewCount = viewCount,
                 Duration = duration,
                 CurrentViewers = currentViewers
-            }); 
+            });
         }
         return result;
     }
-   
+    private static SearchResultInfo MapVideoByInput(YoutubeVideoItem video)
+    {
+        var videoInfo = video.Snippet;
+        var result = new SearchResultInfo
+        {
+            VideoId = video.Id,
+            Title = videoInfo?.Title ?? "No Title",
+            EmbedUrl = $"https://www.youtube.com/embed/{video.Id}",
+            ThumbnailUrl = videoInfo.Thumbnails?.High?.Url
+                                ?? videoInfo.Thumbnails?.Medium?.Url
+                                ?? videoInfo.Thumbnails?.Default?.Url
+                                ?? $"https://img.youtube.com/vi/{video.Id}/hqdefault.jpg",
+            ChannelName = videoInfo.ChannelTitle ?? "Unknown Channel",
+            Description = videoInfo.Description ?? "",
+            PublishedAt = videoInfo.PublishedAt?.ToString("O"),
+            IsLive = videoInfo?.LiveBroadcastContent == "live",
+            ViewCount = video.Statistics?.ViewCount,
+            Duration = video.ContentDetails?.Duration,
+            CurrentViewers = video.LiveStreamingDetails?.ConcurrentViewers
+
+        };
+        return result;
+
+    }
+
     private List<SearchResultInfo>? TryGetCachedResults(string cachedKey)
     {
         if (cache.TryGetValue(cachedKey, out List<SearchResultInfo>? cachedResult))
@@ -160,5 +219,61 @@ public class YoutubeService
         var cachedKeyString = $"youtube-search:{searchQuery}";
         return cachedKeyString;
     }
-    
+    private static string ExtractVideoIdFromInput(string input)
+    {
+        var trimmedInput = input.Trim();
+        if (!Uri.TryCreate(trimmedInput, UriKind.Absolute, out var uri))
+        {
+            throw new ArgumentException("Input must be a valid YouTube URL. ", nameof(input));
+        }
+        if (!IsYouTubeHost(uri.Host))
+        {
+            throw new ArgumentException("Input must be a YouTube URL. ", nameof(input));
+        }
+        if (uri.Host.Contains("youtu.be", StringComparison.OrdinalIgnoreCase))
+        {
+            var videoId = uri.AbsolutePath.Trim('/').Split('/').FirstOrDefault();
+            return ValidateVideoId(videoId);
+        }
+        var queryParams = QueryHelpers.ParseQuery(uri.Query);
+        if (queryParams.TryGetValue("v", out var videoIdFromQuery))
+        {
+            return ValidateVideoId(videoIdFromQuery.ToString());
+        }
+
+        var pathParts = uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        if (pathParts.Length >= 2 &&
+        (pathParts[0].Equals("embed", StringComparison.OrdinalIgnoreCase) ||
+        pathParts[0].Equals("live", StringComparison.OrdinalIgnoreCase) ||
+        pathParts[0].Equals("shorts", StringComparison.OrdinalIgnoreCase)))
+        {
+            return ValidateVideoId(pathParts[1]);
+        }
+        throw new ArgumentException("Could not find a YouTube video ID in the URL");
+    }
+    private static bool IsYouTubeHost(string host)
+    {
+        return host.Equals("youtube.com", StringComparison.OrdinalIgnoreCase) ||
+           host.Equals("www.youtube.com", StringComparison.OrdinalIgnoreCase) ||
+           host.Equals("m.youtube.com", StringComparison.OrdinalIgnoreCase) ||
+           host.Equals("youtu.be", StringComparison.OrdinalIgnoreCase);
+    }
+    private static string ValidateVideoId(string? videoId)
+    {
+        if (string.IsNullOrWhiteSpace(videoId))
+        {
+            throw new ArgumentException("YouTbue video ID is missing");
+        }
+
+        videoId = videoId.Trim();
+
+        if (videoId.Length != 11)
+        {
+            throw new ArgumentException("YouTube video ID is invalid");
+        }
+
+        return videoId;
+
+    }
+
 }

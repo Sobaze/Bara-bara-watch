@@ -2,7 +2,10 @@ import { useState, useRef } from 'react'
 import { TopNavBar } from './components/TopNavBar'
 import { Watchroom } from './components/Watchroom'
 import type { StreamInfo, SearchResultInfo } from './types/stream'
-import { fetchYoutubeSearchResults } from './api/endpoints'
+import {
+  fetchYoutubeSearchResults,
+  fetchYoutubeVideoByUrl,
+} from './api/endpoints'
 function App() {
   const latestSearchRequestRef = useRef(0)
   const [isSearching, setIsSearching] = useState(false)
@@ -15,6 +18,7 @@ function App() {
   async function handleSearch(searchQueryString: string) {
     const requestId = latestSearchRequestRef.current + 1
     latestSearchRequestRef.current = requestId
+    const isQueryUrl = checkIfYoutubeUrl(searchQueryString)
     if (!searchQueryString) {
       setSearchResults([])
       setIsPanelOpen(false)
@@ -22,9 +26,33 @@ function App() {
       setIsSearching(false)
       return
     }
+
+    if (isQueryUrl && streams.length >= 4) {
+      setSearchError(
+        'The watchroom is full. Remove a stream before adding another.'
+      )
+      setSearchResults([])
+      setIsPanelOpen(true)
+      setIsSearching(false)
+      return
+    }
+    setIsSearching(true)
+    setSearchError(null)
+
     try {
-      setIsSearching(true)
-      setSearchError(null)
+      if (isQueryUrl) {
+        setIsPanelOpen(true)
+        const result = await fetchYoutubeVideoByUrl(searchQueryString)
+        if (latestSearchRequestRef.current !== requestId) {
+          return
+        }
+        handleAddSearchResultToStream(result)
+        setSearchQuery('')
+        setSearchResults([])
+        setIsPanelOpen(false)
+        return
+      }
+
       setIsPanelOpen(true)
       const results = await fetchYoutubeSearchResults(searchQueryString)
       if (latestSearchRequestRef.current !== requestId) {
@@ -36,8 +64,13 @@ function App() {
         return
       }
       console.error('Error fetching search results:', err)
-      setSearchError('Failed to fetch search results. Please try again.')
+      setSearchError(
+        isQueryUrl
+          ? 'Failed to add YouTube Video from URL'
+          : 'Failed to fetch search results. Please try again.'
+      )
       setSearchResults([])
+      setIsPanelOpen(true)
     } finally {
       if (latestSearchRequestRef.current === requestId) {
         setIsSearching(false)
@@ -83,6 +116,14 @@ function App() {
   function handleRemoveStream(streamId: string) {
     setStreams((prevStreams) =>
       prevStreams.filter((stream) => stream.instanceId !== streamId)
+    )
+  }
+
+  function checkIfYoutubeUrl(input: string) {
+    const normalizedInput = input.toLowerCase()
+    return (
+      normalizedInput.includes('youtube.com') ||
+      normalizedInput.includes('youtu.be')
     )
   }
 

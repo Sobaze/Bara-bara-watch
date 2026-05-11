@@ -1,5 +1,7 @@
 # Bara-bara-watch
 
+![CI](https://github.com/jonis/Bara-bara-watch/actions/workflows/ci.yml/badge.svg)
+
 Bara-bara-watch is a multi-watch web app where you can watch multiple YouTube videos at once.
 
 ## Demo
@@ -9,6 +11,8 @@ https://github.com/user-attachments/assets/51b7579d-6e93-4f21-aeeb-bc5b3a521a48
 ## Features
 
 - Search for different videos from YouTube and add them to one of the available watchroom slots to watch.
+
+- Videos can be added directly by using the YouTube URL as well.
 
 - Add up to four videos, with the top navigation showing the current stream count.
 
@@ -100,6 +104,7 @@ dotnet build --no-restore
 
 ## Current Limitations
 
+- The watchroom controls are currently optimized for desktop interactions.
 - YouTube iframe playback controls are limited and interfere with some wanted features.
 - Search is currently limited to up to 10 results.
 - No auth yet and not possible with shared rooms.
@@ -107,7 +112,6 @@ dotnet build --no-restore
 
 ## Planned Features
 
-- Add YouTube videos directly by URL
 - Search/filter by saved YouTube channel groups
 - Play/pause all videos with one control.
 - Mute/unmute individual videos with keyboard shortcuts.

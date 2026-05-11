@@ -1,4 +1,5 @@
 namespace Barabara.Api.Models;
+
 public class YoutubeVideosResponse
 {
     public List<YoutubeVideoItem> Items { get; set; } = [];
@@ -15,7 +16,7 @@ public class YoutubeVideoItem
 
 public class YoutubeContentDetails
 {
-    public string? Duration { get; set; } 
+    public string? Duration { get; set; }
 }
 
 public class YoutubeStatistics
@@ -30,5 +31,10 @@ public class YoutubeLiveStreamingDetails
 
 public class YoutubeVideoSnippet
 {
+    public string? Title { get; set; }
+    public string? Description { get; set; }
+    public string? ChannelTitle { get; set; }
+    public DateTimeOffset? PublishedAt { get; set; }
+    public YoutubeThumbnails? Thumbnails { get; set; }
     public string? LiveBroadcastContent { get; set; }
 }
