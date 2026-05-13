@@ -106,7 +106,7 @@ export function Watchroom({
       ref={fullScreenRef}
       onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
-      className="relative flex h-[93dvh] flex-col overflow-hidden rounded-2xl bg-zinc-950"
+      className="relative flex h-[calc(100dvh-4rem)] flex-col overflow-hidden rounded-2xl bg-zinc-950"
     >
       <div className="h-full">
         {<StreamSlotGrid streams={streams} layout={activeLayout} />}

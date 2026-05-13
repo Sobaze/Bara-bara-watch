@@ -36,9 +36,13 @@ export function TopNavBar({
   }
 
   return (
-    <nav className="grid grid-cols-[auto_1fr_auto] h-[7dvh] items-center gap-2 bg-gray-800 px-2  text-white">
-      <div className="flex items-center gap-2">
-        <img src="/logo.png" alt="Logo" className="h-8 w-8" />
+    <nav className="grid grid-cols-[auto_1fr_auto] h-16 items-center gap-1 bg-gray-800 px-2  text-white">
+      <div className="flex items-center gap-1">
+        <img
+          src="/barabaralogo.png"
+          alt="Barabara Watch Logo"
+          className="h-12 w-12 object-contain"
+        />
         <h1 className="text-lg font-bold">Bara Bara Watch</h1>
       </div>
       <div className="relative mx-auto w-full max-w-xl">
