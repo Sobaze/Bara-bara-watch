@@ -109,7 +109,7 @@ export function Watchroom({
       className="relative flex h-[calc(100dvh-4rem)] flex-col overflow-hidden rounded-2xl bg-zinc-950"
     >
       <div className="h-full">
-        {<StreamSlotGrid streams={streams} layout={activeLayout} />}
+        <StreamSlotGrid streams={streams} layout={activeLayout} />
       </div>
       <div className={`absolute bottom-2 right-2 z-20 flex items-end`}>
         {isLayoutSelectorOpen && canChangeLayout && (
