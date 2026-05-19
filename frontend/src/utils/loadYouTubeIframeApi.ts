@@ -14,7 +14,7 @@ export function loadYouTubeIframeApi(): Promise<void> {
       resolve()
     }
     const existingScript = document.querySelector(
-      'script[src"https://youtube.com/ifram.com/iframe_api"]'
+      'script[src="https://www.youtube.com/iframe_api"]'
     )
 
     if (existingScript) {

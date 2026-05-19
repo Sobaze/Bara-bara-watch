@@ -11,29 +11,42 @@ export function StreamSlot({ stream }: StreamSlotProps) {
   const playerRef = useRef<YouTubePlayer | null>(null)
 
   useEffect(() => {
+    let active = true
     async function handleYouTubeApiLoader() {
       if (playerFrameRef.current == null) {
         return
       }
       await loadYouTubeIframeApi()
-      playerRef.current = new window.YT?.Player(playerFrameRef.current, {
-        videoId: stream.videoId
-      })
+      if (active === false) {
+        return
+      }
+
+      if (playerFrameRef.current == null) {
+        return
+      }
+      if (window.YT?.Player) {
+        playerRef.current = new window.YT.Player(playerFrameRef.current, {
+          videoId: stream.videoId,
+          // events: {
+          //   onReady: onPlayerReady,
+          // },
+        })
+      }
     }
+    handleYouTubeApiLoader()
     return () => {
-        if (playerRef.current) {
-            playerRef.current.destroy()
-            playerRef.current = null
-        }
+      active = false
+      if (playerRef.current) {
+        playerRef.current.destroy()
+        playerRef.current = null
+      }
     }
-  }, [])
+  }, [stream.videoId])
 
-  function onPlayerReady(event: YouTubePlayerEvent) {
-    event.target.playVideo()
-  }
-  function onStateChange(event: YouTubePlayerEvent) {
-    
-  }
+  //   function onPlayerReady(event: YouTubePlayerEvent) {
+  //     event.target.playVideo()
+  //   }
+  //   function onStateChange(event: YouTubePlayerEvent) {}
 
-  return <div ref={playerFrameRef}></div>
+  return <div className="h-full w-full" ref={playerFrameRef}></div>
 }
