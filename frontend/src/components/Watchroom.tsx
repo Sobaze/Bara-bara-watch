@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { StreamSlotGrid } from './StreamSlotGrid'
 import type { StreamInfo } from '../types/stream'
 import type {
@@ -6,6 +6,7 @@ import type {
   LayoutMode,
   TwoStreamLayout,
   ThreeStreamLayout,
+  StreamControls,
 } from '../types/stream'
 import { StreamSettings } from './StreamSettings'
 import { StreamLayoutSelector } from './StreamLayoutSelector'
@@ -23,6 +24,7 @@ export function Watchroom({
 }: WatchroomProps) {
   const fullScreenRef = useRef<HTMLDivElement>(null)
   const hideControlsTimeoutRef = useRef<number | null>(null)
+  const streamControlsRef = useRef<Record<string, StreamControls>>({})
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [isLayoutSelectorOpen, setIsLayoutSelectorOpen] = useState(false)
   const [isStreamSettingsOpen, setIsStreamSettingsOpen] = useState(false)
@@ -41,6 +43,47 @@ export function Watchroom({
         : null
   const layoutMode: LayoutMode =
     streams.length === 2 ? '2-stream' : streams.length === 3 ? '3-stream' : null
+
+  const registerStreamControls = useCallback(
+    (instanceId: string, controls: StreamControls) => {
+      streamControlsRef.current[instanceId] = controls
+    },
+    []
+  )
+  const unregisterStreamControl = useCallback((instanceId: string) => {
+    delete streamControlsRef.current[instanceId]
+  }, [])
+
+  useEffect(() => {
+    function keyDownListener(e: KeyboardEvent) {
+      if (
+        (e.target instanceof HTMLInputElement && e.target.isContentEditable) ||
+        e.target instanceof HTMLTextAreaElement ||
+        e.target instanceof HTMLSelectElement
+      ) {
+        return
+      }
+      const allowedKeys = ['1', '2', '3', '4']
+      if (!allowedKeys.includes(e.key)) {
+        return
+      }
+      const keyToIndex = +e.key - 1
+      if (!streams[keyToIndex]) {
+        return
+      }
+      const streamId = streams[keyToIndex].instanceId
+      const controls = streamControlsRef.current[streamId]
+      if (!controls) {
+        return
+      }
+      controls.toggleMute()
+    }
+    document.addEventListener('keydown', keyDownListener)
+
+    return () => {
+      document.removeEventListener('keydown', keyDownListener)
+    }
+  }, [streams])
 
   useEffect(() => {
     function handleFullScreenChange() {
@@ -109,7 +152,12 @@ export function Watchroom({
       className="relative flex h-[calc(100dvh-4rem)] flex-col overflow-hidden rounded-2xl bg-zinc-950"
     >
       <div className="h-full">
-        <StreamSlotGrid streams={streams} layout={activeLayout} />
+        <StreamSlotGrid
+          streams={streams}
+          layout={activeLayout}
+          registerStreamControls={registerStreamControls}
+          unregisterStreamControl={unregisterStreamControl}
+        />
       </div>
       <div className={`absolute bottom-2 right-2 z-20 flex items-end`}>
         {isLayoutSelectorOpen && canChangeLayout && (

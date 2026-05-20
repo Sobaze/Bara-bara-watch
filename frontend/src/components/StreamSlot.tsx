@@ -1,12 +1,21 @@
 import { useEffect, useRef } from 'react'
-import type { StreamInfo } from '../types/stream'
+import type { StreamInfo, StreamControls } from '../types/stream'
 import { loadYouTubeIframeApi } from '../utils/loadYouTubeIframeApi'
 
 type StreamSlotProps = {
   stream: StreamInfo
+  registerStreamControls: (
+    instanceId: string,
+    streamControls: StreamControls
+  ) => void
+  unregisterStreamControl: (instanceId: string) => void
 }
 
-export function StreamSlot({ stream }: StreamSlotProps) {
+export function StreamSlot({
+  stream,
+  registerStreamControls,
+  unregisterStreamControl,
+}: StreamSlotProps) {
   const playerFrameRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<YouTubePlayer | null>(null)
 
@@ -31,17 +40,34 @@ export function StreamSlot({ stream }: StreamSlotProps) {
           //   onReady: onPlayerReady,
           // },
         })
+        registerStreamControls(stream.instanceId, {
+          toggleMute() {
+            if (playerRef.current) {
+              if (playerRef.current.isMuted() === true) {
+                playerRef.current.unMute()
+              } else {
+                playerRef.current.mute()
+              }
+            }
+          },
+        })
       }
     }
     handleYouTubeApiLoader()
     return () => {
       active = false
+      unregisterStreamControl(stream.instanceId)
       if (playerRef.current) {
         playerRef.current.destroy()
         playerRef.current = null
       }
     }
-  }, [stream.videoId])
+  }, [
+    stream.videoId,
+    stream.instanceId,
+    registerStreamControls,
+    unregisterStreamControl,
+  ])
 
   //   function onPlayerReady(event: YouTubePlayerEvent) {
   //     event.target.playVideo()

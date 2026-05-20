@@ -1,12 +1,22 @@
 import { StreamSlot } from './StreamSlot'
-import type { ActiveLayout, StreamInfo } from '../types/stream'
+import type { ActiveLayout, StreamInfo, StreamControls } from '../types/stream'
 
 type StreamGridProps = {
   streams: StreamInfo[]
   layout?: ActiveLayout
+  registerStreamControls: (
+    instanceId: string,
+    streamControls: StreamControls
+  ) => void
+  unregisterStreamControl: (instanceId: string) => void
 }
 
-export function StreamSlotGrid({ streams, layout }: StreamGridProps) {
+export function StreamSlotGrid({
+  streams,
+  layout,
+  registerStreamControls,
+  unregisterStreamControl,
+}: StreamGridProps) {
   return (
     <div className=" p-1 h-full">
       {streams.length === 0 && (
@@ -15,8 +25,12 @@ export function StreamSlotGrid({ streams, layout }: StreamGridProps) {
         </div>
       )}
       {streams.length === 1 && (
-        <div className="col-span-2 h-full flex items-center justify-center">
-          <StreamSlot stream={streams[0]} />
+        <div className="col-span-2 h-full min-h-0 flex items-center justify-center rounded-lg border-zinc-800 bg-black shadow-sm">
+          <StreamSlot
+            stream={streams[0]}
+            registerStreamControls={registerStreamControls}
+            unregisterStreamControl={unregisterStreamControl}
+          />
         </div>
       )}
       {streams.length === 2 && (
@@ -34,7 +48,11 @@ export function StreamSlotGrid({ streams, layout }: StreamGridProps) {
               key={stream.instanceId}
               className="min-h-0 overflow-hidden rounded-lg border border-zinc-800 bg-black shadow-sm"
             >
-              <StreamSlot stream={stream} />
+              <StreamSlot
+                stream={stream}
+                registerStreamControls={registerStreamControls}
+                unregisterStreamControl={unregisterStreamControl}
+              />
             </div>
           ))}
         </div>
@@ -59,7 +77,11 @@ export function StreamSlotGrid({ streams, layout }: StreamGridProps) {
                 key={stream.instanceId}
                 className={`${baseLayout} ${layoutClass} `}
               >
-                <StreamSlot stream={stream} />
+                <StreamSlot
+                  stream={stream}
+                  registerStreamControls={registerStreamControls}
+                  unregisterStreamControl={unregisterStreamControl}
+                />
               </div>
             )
           })}
@@ -72,7 +94,11 @@ export function StreamSlotGrid({ streams, layout }: StreamGridProps) {
               key={stream.instanceId}
               className="min-h-0 overflow-hidden rounded-lg border border-zinc-800 bg-black shadow-sm"
             >
-              <StreamSlot stream={stream} />
+              <StreamSlot
+                stream={stream}
+                registerStreamControls={registerStreamControls}
+                unregisterStreamControl={unregisterStreamControl}
+              />
             </div>
           ))}
         </div>
