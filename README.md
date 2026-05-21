@@ -20,6 +20,8 @@ https://github.com/user-attachments/assets/51b7579d-6e93-4f21-aeeb-bc5b3a521a48
 
 - Added streams appear inside the watchroom immediately.
 
+- Mute/unmute individual videos with keyboard shortcuts 1, 2, 3, 4.
+
 ### Layouts
 
 #### 2-Stream cases:
@@ -109,9 +111,9 @@ dotnet build --no-restore
 - Search is currently limited to up to 10 results.
 - No auth yet and not possible with shared rooms.
 - Not deployed yet.
+- When an iframe video player gets clicked it takes over the focus so the mute/unmute keybinds don't work.
 
 ## Planned Features
 
 - Search/filter by saved YouTube channel groups
 - Play/pause all videos with one control.
-- Mute/unmute individual videos with keyboard shortcuts.
