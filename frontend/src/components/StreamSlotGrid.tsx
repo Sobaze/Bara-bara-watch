@@ -1,5 +1,6 @@
 import { StreamSlot } from './StreamSlot'
-import type { ActiveLayout, StreamInfo, StreamControls } from '../types/stream'
+import type { ActiveLayout, StreamInfo } from '../types/stream'
+import type { StreamControls } from '../types/streamControls'
 
 type StreamGridProps = {
   streams: StreamInfo[]
@@ -18,14 +19,14 @@ export function StreamSlotGrid({
   unregisterStreamControl,
 }: StreamGridProps) {
   return (
-    <div className=" p-1 h-full">
+    <div className="p-1 h-full">
       {streams.length === 0 && (
         <div className="col-span-2 h-full flex items-center justify-center text-gray-500">
           No streams added. Search for a Stream and add it.
         </div>
       )}
       {streams.length === 1 && (
-        <div className="col-span-2 h-full min-h-0 flex items-center justify-center rounded-lg border-zinc-800 bg-black shadow-sm">
+        <div className="col-span-2 h-full min-h-0 overflow-hidden rounded-lg border border-zinc-800 bg-black shadow-sm">
           <StreamSlot
             stream={streams[0]}
             registerStreamControls={registerStreamControls}
@@ -37,7 +38,7 @@ export function StreamSlotGrid({
         <div
           className={
             layout === 'side-by-side'
-              ? 'grid h-full grid-cols-2 '
+              ? 'grid h-full grid-cols-2'
               : layout === 'stacked'
                 ? 'grid h-full grid-rows-2'
                 : 'grid h-full grid-cols-2'
@@ -60,7 +61,8 @@ export function StreamSlotGrid({
       {streams.length === 3 && (
         <div className="grid h-full grid-cols-2 grid-rows-2">
           {streams.map((stream, index) => {
-            const baseLayout = 'min-h-0 overflow-hidden rounded-md bg-black'
+            const baseLayout =
+              'min-h-0 overflow-hidden rounded-lg border border-zinc-800 bg-black shadow-sm'
             const layoutClass =
               layout === 'main-on-top'
                 ? index === 0
@@ -75,7 +77,7 @@ export function StreamSlotGrid({
             return (
               <div
                 key={stream.instanceId}
-                className={`${baseLayout} ${layoutClass} `}
+                className={`${baseLayout} ${layoutClass}`}
               >
                 <StreamSlot
                   stream={stream}
@@ -88,7 +90,7 @@ export function StreamSlotGrid({
         </div>
       )}
       {streams.length === 4 && (
-        <div className="grid h-full grid-cols-2">
+        <div className="grid h-full grid-cols-2 grid-rows-2">
           {streams.map((stream) => (
             <div
               key={stream.instanceId}

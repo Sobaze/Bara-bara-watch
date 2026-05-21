@@ -6,8 +6,8 @@ import type {
   LayoutMode,
   TwoStreamLayout,
   ThreeStreamLayout,
-  StreamControls,
 } from '../types/stream'
+import type { StreamControls } from '../types/streamControls'
 import { StreamSettings } from './StreamSettings'
 import { StreamLayoutSelector } from './StreamLayoutSelector'
 
@@ -55,15 +55,21 @@ export function Watchroom({
   }, [])
 
   useEffect(() => {
+    const allowedKeys = ['1', '2', '3', '4']
     function keyDownListener(e: KeyboardEvent) {
+      const target = e.target
+      if (!(target instanceof HTMLElement)) {
+        return
+      }
       if (
-        (e.target instanceof HTMLInputElement && e.target.isContentEditable) ||
-        e.target instanceof HTMLTextAreaElement ||
-        e.target instanceof HTMLSelectElement
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLSelectElement ||
+        target.isContentEditable
       ) {
         return
       }
-      const allowedKeys = ['1', '2', '3', '4']
+
       if (!allowedKeys.includes(e.key)) {
         return
       }

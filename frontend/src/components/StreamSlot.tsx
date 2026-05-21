@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
-import type { StreamInfo, StreamControls } from '../types/stream'
+import type { StreamInfo } from '../types/stream'
+import type { StreamControls } from '../types/streamControls'
 import { loadYouTubeIframeApi } from '../utils/loadYouTubeIframeApi'
 
 type StreamSlotProps = {

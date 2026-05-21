@@ -28,7 +28,3 @@ export type ThreeStreamLayout = 'main-on-top' | 'main-on-left'
 export type ActiveLayout = TwoStreamLayout | ThreeStreamLayout | null
 
 export type LayoutMode = '2-stream' | '3-stream' | null
-
-export type StreamControls = {
-  toggleMute: () => void
-}
