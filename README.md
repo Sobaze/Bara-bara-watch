@@ -22,6 +22,8 @@ https://github.com/user-attachments/assets/51b7579d-6e93-4f21-aeeb-bc5b3a521a48
 
 - Mute/unmute individual videos with keyboard shortcuts 1, 2, 3, 4.
 
+- Play all videos with the keybind P and pause all videos with the keybind S.
+
 ### Layouts
 
 #### 2-Stream cases:
@@ -102,6 +104,7 @@ Backend checks:
 cd backend
 dotnet restore
 dotnet build --no-restore
+dotnet test --no-build
 ```
 
 ## Current Limitations
@@ -111,9 +114,9 @@ dotnet build --no-restore
 - Search is currently limited to up to 10 results.
 - No auth yet and not possible with shared rooms.
 - Not deployed yet.
-- When an iframe video player gets clicked it takes over the focus so the mute/unmute keybinds don't work.
+- YouTube iframes take focus when clicked, so watchroom keyboard shortcuts only work when focus is outside the video iframe.
+- Play/pause shortcuts apply to every active video and do not toggle based on each video's current state.
 
 ## Planned Features
 
 - Search/filter by saved YouTube channel groups
-- Play/pause all videos with one control.

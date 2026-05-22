@@ -70,19 +70,36 @@ export function Watchroom({
         return
       }
 
-      if (!allowedKeys.includes(e.key)) {
-        return
+      if (allowedKeys.includes(e.key)) {
+        const keyToIndex = +e.key - 1
+        if (!streams[keyToIndex]) {
+          return
+        }
+        const streamId = streams[keyToIndex].instanceId
+        const controls = streamControlsRef.current[streamId]
+        if (!controls) {
+          return
+        }
+        controls.toggleMute()
       }
-      const keyToIndex = +e.key - 1
-      if (!streams[keyToIndex]) {
-        return
+      if (e.key === 'p') {
+        for (const stream of streams) {
+          const streamId = stream.instanceId
+          const controls = streamControlsRef.current[streamId]
+          if (controls) {
+            controls.play()
+          }
+        }
       }
-      const streamId = streams[keyToIndex].instanceId
-      const controls = streamControlsRef.current[streamId]
-      if (!controls) {
-        return
+      if (e.key === 's') {
+        for (const stream of streams) {
+          const streamId = stream.instanceId
+          const controls = streamControlsRef.current[streamId]
+          if (controls) {
+            controls.pause()
+          }
+        }
       }
-      controls.toggleMute()
     }
     document.addEventListener('keydown', keyDownListener)
 

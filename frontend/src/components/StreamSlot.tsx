@@ -37,9 +37,6 @@ export function StreamSlot({
       if (window.YT?.Player) {
         playerRef.current = new window.YT.Player(playerFrameRef.current, {
           videoId: stream.videoId,
-          // events: {
-          //   onReady: onPlayerReady,
-          // },
         })
         registerStreamControls(stream.instanceId, {
           toggleMute() {
@@ -49,6 +46,16 @@ export function StreamSlot({
               } else {
                 playerRef.current.mute()
               }
+            }
+          },
+          play() {
+            if (playerRef.current) {
+              playerRef.current.playVideo()
+            }
+          },
+          pause() {
+            if (playerRef.current) {
+              playerRef.current.pauseVideo()
             }
           },
         })
