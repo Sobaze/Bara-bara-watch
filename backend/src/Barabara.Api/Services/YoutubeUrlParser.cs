@@ -8,8 +8,8 @@ public static class YoutubeUrlParser
 
     public static string ExtractVideoId(string input)
     {
-        var trimmedInput = input.Trim();
-        if (!Uri.TryCreate(trimmedInput, UriKind.Absolute, out var uri))
+
+        if (!Uri.TryCreate(input, UriKind.Absolute, out var uri))
         {
             throw new ArgumentException("Input must be a valid YouTube URL. ", nameof(input));
         }

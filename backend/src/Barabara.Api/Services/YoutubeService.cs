@@ -47,14 +47,25 @@ public class YoutubeService
     }
     public async Task<SearchResultInfo> GetVideoByInputAsync(string input, CancellationToken cancellationToken)
     {
-        var inputString = input;
-
+        var inputString = input.Trim();
+        if (string.IsNullOrWhiteSpace(inputString))
+        {
+            throw new ArgumentException("Need to provide an url", nameof(input));
+        }
         var extractedVideoId = YoutubeUrlParser.ExtractVideoId(inputString);
         if (string.IsNullOrWhiteSpace(extractedVideoId))
         {
             logger.LogWarning("Video ID not found");
             throw new ArgumentException("Could not find video with URL");
         }
+        var cachedUrlKey = BuildUrlCachedKey(extractedVideoId);
+        var cachedUrlResults = TryGetCachedUrlResult(cachedUrlKey);
+
+        if (cachedUrlResults != null)
+        {
+            return cachedUrlResults;
+        }
+
         var videosUrl = QueryHelpers.AddQueryString(VideosEndpoint, new Dictionary<string, string?>
         {
             ["part"] = "snippet,contentDetails,statistics,liveStreamingDetails",
@@ -75,6 +86,7 @@ public class YoutubeService
             throw new InvalidOperationException("Video not found");
         }
         var mappedResultVideo = MapVideoByInput(video);
+        cache.Set(cachedUrlKey, mappedResultVideo, TimeSpan.FromMinutes(10));
 
         return mappedResultVideo;
 
@@ -216,11 +228,27 @@ public class YoutubeService
         return null;
     }
 
+    private SearchResultInfo? TryGetCachedUrlResult(string cachedUrlKey)
+    {
+        if (cache.TryGetValue(cachedUrlKey, out SearchResultInfo? cachedUrlResult))
+        {
+            logger.LogInformation("Returning cached YouTube video for: {VideoCacheKey}", cachedUrlKey);
+            return cachedUrlResult;
+        }
+        return null;
+    }
+
     private static string BuildCachedKey(string query)
     {
         var searchQuery = query.ToLowerInvariant();
         var cachedKeyString = $"youtube-search:{searchQuery}";
         return cachedKeyString;
+    }
+
+    private static string BuildUrlCachedKey(string videoId)
+    {
+        var urlKeyString = $"youtube-video:{videoId}";
+        return urlKeyString;
     }
 
 
