@@ -77,10 +77,5 @@ export function StreamSlot({
     unregisterStreamControl,
   ])
 
-  //   function onPlayerReady(event: YouTubePlayerEvent) {
-  //     event.target.playVideo()
-  //   }
-  //   function onStateChange(event: YouTubePlayerEvent) {}
-
   return <div className="h-full w-full" ref={playerFrameRef}></div>
 }

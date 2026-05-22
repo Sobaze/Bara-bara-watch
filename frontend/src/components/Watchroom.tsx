@@ -10,6 +10,7 @@ import type {
 import type { StreamControls } from '../types/streamControls'
 import { StreamSettings } from './StreamSettings'
 import { StreamLayoutSelector } from './StreamLayoutSelector'
+import { Shortcuts } from './Shortcuts'
 
 type WatchroomProps = {
   streams: StreamInfo[]
@@ -28,6 +29,7 @@ export function Watchroom({
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [isLayoutSelectorOpen, setIsLayoutSelectorOpen] = useState(false)
   const [isStreamSettingsOpen, setIsStreamSettingsOpen] = useState(false)
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false)
 
   const [twoStreamLayout, setTwoStreamLayout] =
     useState<TwoStreamLayout>('side-by-side')
@@ -147,15 +149,23 @@ export function Watchroom({
   function handleMouseLeave() {
     setIsLayoutSelectorOpen(false)
     setIsStreamSettingsOpen(false)
+    setIsShortcutsOpen(false)
   }
 
   function handleOpenLayoutSelector() {
     setIsLayoutSelectorOpen(true)
     setIsStreamSettingsOpen(false)
+    setIsShortcutsOpen(false)
   }
 
   function handleOpenStreamSettings() {
     setIsStreamSettingsOpen(true)
+    setIsLayoutSelectorOpen(false)
+    setIsShortcutsOpen(false)
+  }
+  function handleOpenShortcuts() {
+    setIsShortcutsOpen(true)
+    setIsStreamSettingsOpen(false)
     setIsLayoutSelectorOpen(false)
   }
 
@@ -202,6 +212,11 @@ export function Watchroom({
             />
           </div>
         )}
+        {isShortcutsOpen && (
+          <div onMouseLeave={() => setIsShortcutsOpen(false)}>
+            <Shortcuts />
+          </div>
+        )}
         <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-zinc-900/85 p-2 shadow-lg backdrop-blur">
           {canChangeLayout && (
             <button
@@ -218,6 +233,13 @@ export function Watchroom({
             className="rounded-xl px-3 py-2 text-sm font-medium text-zinc-100 transition hover:bg-white/10"
           >
             Streams
+          </button>
+          <button
+            type="button"
+            onMouseEnter={handleOpenShortcuts}
+            className="rounded-xl px-3 py-2 text-sm font-medium text-zinc-100 transition hover:bg-white/10"
+          >
+            Shortcuts
           </button>
           <button
             type="button"
