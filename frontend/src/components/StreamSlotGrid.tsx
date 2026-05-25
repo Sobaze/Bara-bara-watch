@@ -19,7 +19,7 @@ export function StreamSlotGrid({
   unregisterStreamControl,
 }: StreamGridProps) {
   return (
-    <div className="p-1 h-full">
+    <div className="h-full">
       {streams.length === 0 && (
         <div className="col-span-2 h-full flex items-center justify-center text-gray-500">
           No streams added. Search for a Stream and add it.

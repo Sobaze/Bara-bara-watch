@@ -1,10 +1,12 @@
 import type { SearchResultInfo } from '../types/stream'
 
+const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
+
 export const apiEndpoints = {
   youtubeSearch: (query: string) =>
-    `/api/youtube/search?q=${encodeURIComponent(query)}`,
+    `${apiBaseUrl}/api/youtube/search?q=${encodeURIComponent(query)}`,
   youtubeVideoByInputUrl: (input: string) =>
-    `/api/youtube/video?input=${encodeURIComponent(input)}`,
+    `${apiBaseUrl}/api/youtube/video?input=${encodeURIComponent(input)}`,
 }
 
 export async function fetchYoutubeSearchResults(
