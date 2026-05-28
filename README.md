@@ -4,6 +4,10 @@
 
 Bara-bara-watch is a multi-watch web app where you can watch multiple YouTube videos at once.
 
+## Link to site
+
+https://salmon-mud-0a6063403.7.azurestaticapps.net/
+
 ## Demo
 
 https://github.com/user-attachments/assets/51b7579d-6e93-4f21-aeeb-bc5b3a521a48
@@ -23,6 +27,8 @@ https://github.com/user-attachments/assets/51b7579d-6e93-4f21-aeeb-bc5b3a521a48
 - Mute/unmute individual videos with keyboard shortcuts 1, 2, 3, 4.
 
 - Play all videos with the keybind P and pause all videos with the keybind S.
+
+- The project is hosted on Azure with separate frontend and backend services.
 
 ### Layouts
 
@@ -113,7 +119,6 @@ dotnet test --no-build
 - YouTube iframe playback controls are limited and interfere with some wanted features.
 - Search is currently limited to up to 10 results.
 - No auth yet and not possible with shared rooms.
-- Not deployed yet.
 - YouTube iframes take focus when clicked, so watchroom keyboard shortcuts only work when focus is outside the video iframe.
 - Play/pause shortcuts apply to every active video and do not toggle based on each video's current state.
 
