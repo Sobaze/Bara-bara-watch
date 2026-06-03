@@ -37,6 +37,7 @@ export function SearchResultPanel({
       <button
         onClick={handleClose}
         className="absolute right-1 top-1 rounded-md px-2 py-1 mb-2 text-sm text-zinc-300 hover:bg-white/10 hover:text-white"
+        aria-label="Close search results panel"
       >
         X
       </button>

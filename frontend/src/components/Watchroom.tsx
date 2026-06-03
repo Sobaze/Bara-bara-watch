@@ -30,6 +30,7 @@ export function Watchroom({
   const [isLayoutSelectorOpen, setIsLayoutSelectorOpen] = useState(false)
   const [isStreamSettingsOpen, setIsStreamSettingsOpen] = useState(false)
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false)
+  const [controlsVisible, setControlsVisible] = useState(true)
 
   const [twoStreamLayout, setTwoStreamLayout] =
     useState<TwoStreamLayout>('side-by-side')
@@ -136,22 +137,6 @@ export function Watchroom({
     }
   }, [])
 
-  function handleMouseMove() {
-    if (hideControlsTimeoutRef.current) {
-      window.clearTimeout(hideControlsTimeoutRef.current)
-    }
-    hideControlsTimeoutRef.current = window.setTimeout(() => {
-      setIsLayoutSelectorOpen(false)
-      setIsStreamSettingsOpen(false)
-    }, 2000)
-  }
-
-  function handleMouseLeave() {
-    setIsLayoutSelectorOpen(false)
-    setIsStreamSettingsOpen(false)
-    setIsShortcutsOpen(false)
-  }
-
   function handleOpenLayoutSelector() {
     setIsLayoutSelectorOpen(true)
     setIsStreamSettingsOpen(false)
@@ -169,6 +154,47 @@ export function Watchroom({
     setIsLayoutSelectorOpen(false)
   }
 
+  function showControls() {
+    clearHideControlsTimeout()
+    setControlsVisible(true)
+  }
+
+  function hideControls() {
+    clearHideControlsTimeout()
+    closePanels()
+    if (!isFullScreen) {
+      return
+    }
+    setControlsVisible(false)
+  }
+
+  function closePanels() {
+    setIsLayoutSelectorOpen(false)
+    setIsStreamSettingsOpen(false)
+    setIsShortcutsOpen(false)
+  }
+
+  function scheduleHideControls() {
+    clearHideControlsTimeout()
+    if (!isFullScreen) {
+      return
+    }
+    if (isLayoutSelectorOpen || isStreamSettingsOpen || isShortcutsOpen) {
+      return
+    }
+    hideControlsTimeoutRef.current = window.setTimeout(() => {
+      setControlsVisible(false)
+      hideControlsTimeoutRef.current = null
+    }, 2000)
+  }
+
+  function clearHideControlsTimeout() {
+    if (hideControlsTimeoutRef.current) {
+      window.clearTimeout(hideControlsTimeoutRef.current)
+      hideControlsTimeoutRef.current = null
+    }
+  }
+
   function handleSelectLayout2Streams(layout: TwoStreamLayout) {
     setTwoStreamLayout(layout)
   }
@@ -180,8 +206,6 @@ export function Watchroom({
   return (
     <div
       ref={fullScreenRef}
-      onMouseLeave={handleMouseLeave}
-      onMouseMove={handleMouseMove}
       className="relative flex h-[calc(100dvh-4rem)] flex-col overflow-hidden rounded-2xl bg-zinc-950"
     >
       <div className="h-full">
@@ -192,64 +216,76 @@ export function Watchroom({
           unregisterStreamControl={unregisterStreamControl}
         />
       </div>
-      <div className={`absolute bottom-2 right-2 z-20 flex items-end`}>
-        {isLayoutSelectorOpen && canChangeLayout && (
-          <div onMouseLeave={() => setIsLayoutSelectorOpen(false)}>
-            <StreamLayoutSelector
-              layoutMode={layoutMode}
-              onSelectLayout2Streams={handleSelectLayout2Streams}
-              onSelectLayout3Streams={handleSelectLayout3Streams}
-            />
-          </div>
-        )}
-        {isStreamSettingsOpen && (
-          <div onMouseLeave={() => setIsStreamSettingsOpen(false)}>
-            <StreamSettings
-              streams={streams}
-              onRemoveStream={onRemoveStream}
-              onSwapStream={onSwapStream}
-              activeLayout={activeLayout}
-            />
-          </div>
-        )}
-        {isShortcutsOpen && (
-          <div onMouseLeave={() => setIsShortcutsOpen(false)}>
-            <Shortcuts />
-          </div>
-        )}
-        <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-zinc-900/85 p-2 shadow-lg backdrop-blur">
-          {canChangeLayout && (
+      <div
+        className={`absolute bottom-0 right-2 z-20 flex h-16 w-96 items-end justify-end `}
+        onPointerEnter={showControls}
+        onPointerLeave={hideControls}
+        onFocusCapture={showControls}
+        onBlurCapture={scheduleHideControls}
+      >
+        <div
+          className={`transition-opacity duration-300 ${
+            controlsVisible || !isFullScreen ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          {isLayoutSelectorOpen && canChangeLayout && (
+            <div onMouseLeave={() => setIsLayoutSelectorOpen(false)}>
+              <StreamLayoutSelector
+                layoutMode={layoutMode}
+                onSelectLayout2Streams={handleSelectLayout2Streams}
+                onSelectLayout3Streams={handleSelectLayout3Streams}
+              />
+            </div>
+          )}
+          {isStreamSettingsOpen && (
+            <div onMouseLeave={() => setIsStreamSettingsOpen(false)}>
+              <StreamSettings
+                streams={streams}
+                onRemoveStream={onRemoveStream}
+                onSwapStream={onSwapStream}
+                activeLayout={activeLayout}
+              />
+            </div>
+          )}
+          {isShortcutsOpen && (
+            <div onMouseLeave={() => setIsShortcutsOpen(false)}>
+              <Shortcuts />
+            </div>
+          )}
+          <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-zinc-900/85 p-2 shadow-lg backdrop-blur">
+            {canChangeLayout && (
+              <button
+                type="button"
+                onMouseEnter={handleOpenLayoutSelector}
+                className="rounded-xl px-3 py-2 text-sm font-medium text-zinc-100 transition hover:bg-white/10"
+              >
+                Layout
+              </button>
+            )}
             <button
               type="button"
-              onMouseEnter={handleOpenLayoutSelector}
+              onMouseEnter={handleOpenStreamSettings}
               className="rounded-xl px-3 py-2 text-sm font-medium text-zinc-100 transition hover:bg-white/10"
             >
-              Layout
+              Streams
             </button>
-          )}
-          <button
-            type="button"
-            onMouseEnter={handleOpenStreamSettings}
-            className="rounded-xl px-3 py-2 text-sm font-medium text-zinc-100 transition hover:bg-white/10"
-          >
-            Streams
-          </button>
-          <button
-            type="button"
-            onMouseEnter={handleOpenShortcuts}
-            className="rounded-xl px-3 py-2 text-sm font-medium text-zinc-100 transition hover:bg-white/10"
-          >
-            Shortcuts
-          </button>
-          <button
-            type="button"
-            onClick={
-              isFullScreen ? handleExitFullScreen : handleFullScreenStream
-            }
-            className="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-200"
-          >
-            {isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
-          </button>
+            <button
+              type="button"
+              onMouseEnter={handleOpenShortcuts}
+              className="rounded-xl px-3 py-2 text-sm font-medium text-zinc-100 transition hover:bg-white/10"
+            >
+              Shortcuts
+            </button>
+            <button
+              type="button"
+              onClick={
+                isFullScreen ? handleExitFullScreen : handleFullScreenStream
+              }
+              className="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-200"
+            >
+              {isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
